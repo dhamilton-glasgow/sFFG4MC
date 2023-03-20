@@ -82,10 +82,10 @@
 		Nparticles	-- number of primary particles in this event
   		weight		-- event weight (for consistency this should be per uA beam current)
 		flag		-- an integer to represent generator (reaction) type, ie elastic=1
-		vx[Nparticles]	-- vertex position vector
+		vx[Nparticles]	-- vertex position vector (cm)
 		vy[Nparticles]
 		vz[Nparticles]
-		px[Nparticles]	-- momentum direction vector
+		px[Nparticles]	-- momentum 3-vector (MeV/c)
 		py[Nparticles]
 		pz[Nparticles]
 		E[Nparticles]	-- energy in MeV
