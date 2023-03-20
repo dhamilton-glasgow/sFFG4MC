@@ -7,9 +7,19 @@
 	http://github.com/dhamilton-glasgow/sFFG4MC
 	(developed and tested with Geant4.10.4 and root6.22 on centos7)
 
-	Scattering chamber, exit beamline and target 
-	modified from original NPS simulation:
+	Scattering chamber, exit beamline and target modified from original NPS simulation:
   	https://github.com/gboon18/HallC_NPS
+
+	Default geometry:
+	Target is 10cm LH2
+	Scattering chamber window thickness is 0.05 cm
+	Earm is an array of 2 x 2 x 20 cm3 PbW04 blocks in six sectors (960 total)
+	Earm is at 15.5 degrees and a distance of 239 cm
+	Harm is an array of 15 x 15 x 101.2 cm3 scint-Fe blocks (288 total)
+	Harm blocks are 44 pairs of plastic scintillator (10mm) and iron (13mm)
+	Harm is at 42.5 degrees and a distance of 351 cm
+	Hodoscope is an plastic scintillator array of 3 x 3 x 10 cm3 detectors (7200 total)
+	Harm has a 10 cm thick lead shield
 
 ------------------------------------------------------------------------
  Compilation
@@ -93,9 +103,18 @@
 		Primary_*[]	-- arrays of primary variables, including pdg, energy, position, direction
 		Virtual_Nhits	-- number of virtual detector hits in this event
 		Virtual_*[]	-- arrays of virtual hit variables, including pdg, energy, position, direction,
-				   particle vertex, time, detector id, track id, mother track id
+				   particle vertex, time, track id, mother track id and detector id variables:
+					Virtual_det[] -- which detector (0 for Earm, 1 for hodoscope, 2 for Harm)
+					Virtual_mod[] -- which sector (0 to 5)
+					Virtual_row[] -- which row (0-31 Earm, 0-79 hodoscope, 0-16 Harm)
+					Virtual_col[] -- which col (0-5 Earm, 0-15 hodoscope, 0-3 Harm)
 		Real_Nhits	-- number of real detector hits in this event
 		Real_*[]	-- arrays of real hit variables, including energy deposit, position, time,
-				   detector id
+				   and detector id variables:
+					Real_det[] -- which detector (0 for Earm, 1 for hodoscope, 2 for Harm)
+					Real_mod[] -- which sector (0 to 5)
+					Real_row[] -- which row (0-31 Earm, 0-79 hodoscope, 0-16 Harm)
+					Real_col[] -- which col (0-5 Earm, 0-15 hodoscope, 0-3 Harm)
+
 
 
