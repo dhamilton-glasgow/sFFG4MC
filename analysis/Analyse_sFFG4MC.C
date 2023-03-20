@@ -156,7 +156,10 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   TFile *outfile = new TFile( Form("anasFF_%d.root", run_no),"RECREATE");
 
   Long64_t nentries = TOut->GetEntries();
+  Int_t ntrees      = TOut->GetNtrees();
   
+  cout << "Processing TOut chain with " << ntrees << " trees and " << nentries << " total events" << endl;
+
   //-----------------------------------------------------------------------------------------------------------------------------
   
   Double_t Eb  = 6.6;
@@ -209,7 +212,6 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,200.);
   TH2F* hRealHarm_xy  = new TH2F("hRealHarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-
   //-----------------------------------------------------------------------------------------------------------------------------
 
   for(Long64_t ev=0; ev<nentries;ev++) {
@@ -218,7 +220,9 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
     
     if( ev%10000 == 0 )
       cout << ev << endl;
-    
+
+    Event_weight = Event_weight * 1/ntrees;   // this only works if nevents is the same for all trees in the chain
+
     // Primary variables
     hPrim_N->Fill( (Float_t)Primary_Nhits );
     for( int i =0; i < Primary_Nhits; i++ ) {
