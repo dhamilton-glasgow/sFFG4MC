@@ -6,6 +6,7 @@
 #include "G4RunManager.hh"
 #include "G4Point3D.hh"
 #include "G4Transform3D.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "TROOT.h"
 #include "TApplication.h"
@@ -183,28 +184,25 @@ void OutputManager::FillVirtualArray( Int_t hitn )
     fVirtual_pdg[hitn]    = (Int_t)fVirtual_pdef->GetPDGEncoding();
     fVirtual_tid[hitn]    = (Int_t)fVirtual_Tid;
     fVirtual_pid[hitn]    = (Int_t)fVirtual_Pid;
-    fVirtual_t[hitn]      = (Float_t)fVirtual_time;                                   
+    fVirtual_t[hitn]      = (Float_t)fVirtual_time *ns;                                   
+    fVirtual_E[hitn]      = (Float_t)fVirtual_energy *MeV;                                
 
-    m = (Float_t)fVirtual_pdef->GetPDGMass();
-    p = (Float_t)fVirtual_p3.mag();                             
-    fVirtual_E[hitn] = TMath::Sqrt( p*p + m*m );
+    xpre  = (Float_t)fVirtual_pospre.getX() /cm;                             
+    ypre  = (Float_t)fVirtual_pospre.getY() /cm;                             
+    zpre  = (Float_t)fVirtual_pospre.getZ() /cm;                                                          
+    xpost = (Float_t)fVirtual_pospost.getX() /cm;                                                          
+    ypost = (Float_t)fVirtual_pospost.getY() /cm;                                                          
+    zpost = (Float_t)fVirtual_pospost.getZ() /cm;                                                          
 
-    xpre  = (Float_t)fVirtual_pospre.getX();                             
-    ypre  = (Float_t)fVirtual_pospre.getY();                             
-    zpre  = (Float_t)fVirtual_pospre.getZ();                             
-    xpost = (Float_t)fVirtual_pospost.getX();                             
-    ypost = (Float_t)fVirtual_pospost.getY();                             
-    zpost = (Float_t)fVirtual_pospost.getZ();                             
-
-    fVirtual_xpos[hitn]   = (xpre + xpost)/2.;
-    fVirtual_ypos[hitn]   = (ypre + ypost)/2.;
-    fVirtual_zpos[hitn]   = (zpre + zpost)/2.;
+    fVirtual_xpos[hitn]   = xpost;
+    fVirtual_ypos[hitn]   = ypost;
+    fVirtual_zpos[hitn]   = zpost;
     fVirtual_px[hitn]     = (Float_t)fVirtual_p3.getX();                             
     fVirtual_py[hitn]     = (Float_t)fVirtual_p3.getY();                             
     fVirtual_pz[hitn]     = (Float_t)fVirtual_p3.getZ();
-    fVirtual_vx[hitn]     = (Float_t)fVirtual_vtx.getX();                             
-    fVirtual_vy[hitn]     = (Float_t)fVirtual_vtx.getY();                             
-    fVirtual_vz[hitn]     = (Float_t)fVirtual_vtx.getZ();
+    fVirtual_vx[hitn]     = (Float_t)fVirtual_vtx.getX()/cm;                             
+    fVirtual_vy[hitn]     = (Float_t)fVirtual_vtx.getY()/cm;                                                          
+    fVirtual_vz[hitn]     = (Float_t)fVirtual_vtx.getZ()/cm;                             
     
     if( fVirtual_detid >= 1 && fVirtual_detid <= 960 ) { 
       fVirtual_det[hitn] = 0;                               // NPS
@@ -238,15 +236,15 @@ void OutputManager::FillRealArray( G4int hitn )
 
   if( hitn < fMaxhits ) {
     
-    fReal_Edep[hitn]   = (Float_t)fReal_edep;                                   
-    fReal_t[hitn]      = (Float_t)fReal_time;                                   
+    fReal_Edep[hitn]   = (Float_t)fReal_edep *MeV;                                   
+    fReal_t[hitn]      = (Float_t)fReal_time *ns;                                   
 
-    xpre  = (Float_t)fReal_pospre.getX();                             
-    ypre  = (Float_t)fReal_pospre.getY();                             
-    zpre  = (Float_t)fReal_pospre.getZ();                             
-    xpost = (Float_t)fReal_pospost.getX();                             
-    ypost = (Float_t)fReal_pospost.getY();                             
-    zpost = (Float_t)fReal_pospost.getZ();                             
+    xpre  = (Float_t)fReal_pospre.getX() /cm;                             
+    ypre  = (Float_t)fReal_pospre.getY() /cm;                                                          
+    zpre  = (Float_t)fReal_pospre.getZ() /cm;                                                          
+    xpost = (Float_t)fReal_pospost.getX() /cm;                                                          
+    ypost = (Float_t)fReal_pospost.getY() /cm;                                                          
+    zpost = (Float_t)fReal_pospost.getZ() /cm;                                                          
 
     fReal_xpos[hitn]   = (xpre + xpost)/2.;
     fReal_ypos[hitn]   = (ypre + ypost)/2.;
@@ -284,13 +282,13 @@ void OutputManager::FillPrimaryArray( G4int primn )
   if( primn < fMaxprim ) {
     
     fPrimary_pdg[primn]  = (Int_t)fPrimary_PDef->GetPDGEncoding();
-    fPrimary_E[primn]    = (Float_t)fPrimary_energy; 
-    fPrimary_xpos[primn] = (Float_t)fPrimary_vtx.getX();
-    fPrimary_ypos[primn] = (Float_t)fPrimary_vtx.getY();
-    fPrimary_zpos[primn] = (Float_t)fPrimary_vtx.getZ();
-    fPrimary_px[primn]   = (Float_t)fPrimary_dir.getX();
-    fPrimary_py[primn]   = (Float_t)fPrimary_dir.getY();
-    fPrimary_pz[primn]   = (Float_t)fPrimary_dir.getZ();
+    fPrimary_E[primn]    = (Float_t)fPrimary_energy *MeV; 
+    fPrimary_xpos[primn] = (Float_t)fPrimary_vtx.getX() /cm;                             
+    fPrimary_ypos[primn] = (Float_t)fPrimary_vtx.getY() /cm;                             
+    fPrimary_zpos[primn] = (Float_t)fPrimary_vtx.getZ() /cm;                             
+    fPrimary_px[primn]   = (Float_t)fPrimary_dir.getX() /cm;                             
+    fPrimary_py[primn]   = (Float_t)fPrimary_dir.getY() /cm;                             
+    fPrimary_pz[primn]   = (Float_t)fPrimary_dir.getZ() /cm;                             
     
     fPrimary_Nhits++;
     

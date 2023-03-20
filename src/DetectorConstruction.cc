@@ -70,6 +70,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* expHall_box           = new G4Box("expHall_box",
 					   13. *m, 13. *m, 13. *m );
   
+
   fexpHall_log = new G4LogicalVolume(expHall_box,
 				     fNistManager->FindOrBuildMaterial("G4_AIR"),  
 				     "expHall_log", 0, 0, 0);
