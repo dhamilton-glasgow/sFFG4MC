@@ -21,6 +21,8 @@
 	Hodoscope is an plastic scintillator array of 3 x 3 x 10 cm3 detectors (7200 total)
 	Harm has a 10 cm thick lead shield
 
+	Default units: MeV, cm, ns
+
 ------------------------------------------------------------------------
  Compilation
 
