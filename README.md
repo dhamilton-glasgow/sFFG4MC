@@ -12,7 +12,8 @@
 
 	Default geometry:
 	Target is 10cm LH2
-	Scattering chamber window thickness is 0.05 cm
+	No scattering chamber or exit beamline
+	(when included. scattering chamber window thickness is 0.05 cm)
 	Earm is an array of 2 x 2 x 20 cm3 PbW04 blocks in six sectors (960 total)
 	Earm is at 15.5 degrees and a distance of 239 cm
 	Harm is an array of 15 x 15 x 101.2 cm3 scint-Fe blocks (288 total)
