@@ -4,6 +4,7 @@
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithAnInteger.hh"
 
 //---------------------------------------------------------------------------
 
@@ -41,6 +42,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Detect)
   fTargetLengthCmd->SetGuidance("Set LH2 target length  (value and unit)");
   fTargetLengthCmd->SetUnitCategory("Length");
 
+  fBeamlineCmd = new G4UIcmdWithAnInteger("/sFFG4MC/detector/setBeamline",this);
+  fBeamlineCmd->SetGuidance("Set an integer flag for whether to include scattering chamber and beamline (0 or 1)");
+
   fUpdateCmd = new G4UIcommand("/sFFG4MC/detector/update",this);
   fUpdateCmd->SetGuidance("Update the detector geometry with changed values.");
   fUpdateCmd->SetGuidance("Must be run before beamOn if detector has been changed.");  
@@ -75,6 +79,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 
   if(command == fTargetLengthCmd)
     { fDetector->SetTargetLength(fTargetLengthCmd->GetNewDoubleValue(newValue)); }
+
+  if(command == fBeamlineCmd)
+    { fDetector->SetBeamlineOn(fBeamlineCmd->GetNewIntValue(newValue)); }
 
   if(command == fUpdateCmd)
     fDetector->UpdateGeometry();

@@ -23,6 +23,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   void UpdateGeometry();
   void BuildBeamline();
+  void BuildTarget();
   
   inline G4VPhysicalVolume* GetExpHall()           { return fExpHall;           };
   inline G4VPhysicalVolume* GetDetVol(G4int i)     { return fDetVol[i];         };
@@ -36,6 +37,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   void SetShieldThickness ( G4double t  ) { fShieldThick  = t;  }
   void SetWindowThickness ( G4double th ) { fSCWinThick   = th; }
   void SetTargetLength    ( G4double l  ) { fTarLength    = l; }
+  void SetBeamlineOn      ( G4int b  )    { fBeamline     = b; }
 
   private:
 
@@ -49,6 +51,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4double           fShieldThick;
   G4double           fSCWinThick;
   G4double           fTarLength;
+  G4int              fBeamline;
 
   static const G4int fNPSNrow  = 32;
   static const G4int fNPSNcol  = 5;

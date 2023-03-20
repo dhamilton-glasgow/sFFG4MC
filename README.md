@@ -55,9 +55,13 @@
   	/sFFG4MC/detector/setWindowThickness
   	Set scattering chamber window thickness (value and unit)
 
+	/sFFG4MC/detector/setBeamline
+  	Set an integer flag for whether to include scattering chamber and beamline (0 or 1)
+
   	/sFFG4MC/detector/update	 
   	Update the detector geometry with changed values
   	Must be run before beamOn if detector has been changed  
+
 
 ------------------------------------------------------------------------
  PhysicsList options (always call in macro before /run/initialize)

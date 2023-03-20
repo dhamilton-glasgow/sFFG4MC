@@ -28,13 +28,13 @@ const Float_t Harm_window    = 1e6;
 const Float_t Hodo_threshold = -1;
 const Float_t Hodo_window    = 1e6;
 
-void Analyse_sFFG4MC( Int_t run_no = 1 ) { 
+void Analyse_sFFG4MC( Int_t run_no = 14 ) { 
   
   //-----------------------------------------------------------------------------------------------------------------------------
 
   TChain* TOut = new TChain("TOut");
   
-  TOut->Add(Form("batch_%d_sample.root", run_no));
+  TOut->Add(Form("out/batch_%d*_beam.root", run_no));
 
   const Int_t     Maxprim = 50;
   const Int_t     Maxhits = 10000;

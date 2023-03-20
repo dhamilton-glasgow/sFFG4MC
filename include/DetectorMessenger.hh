@@ -10,6 +10,7 @@ class DetectorConstruction;
 class G4UIdirectory;
 class G4UIcommand;
 class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithAnInteger;
 
 //---------------------------------------------------------------------------
 
@@ -32,6 +33,8 @@ private:
   G4UIcmdWithADoubleAndUnit*   fShieldThicknessCmd;  
   G4UIcmdWithADoubleAndUnit*   fWindowThicknessCmd;  
   G4UIcmdWithADoubleAndUnit*   fTargetLengthCmd;  
+
+  G4UIcmdWithAnInteger*        fBeamlineCmd;  
 
   G4UIcommand*                 fUpdateCmd;
 };

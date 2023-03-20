@@ -42,6 +42,7 @@ DetectorConstruction::DetectorConstruction()
   fShieldThick = 10.0 *cm;
   fSCWinThick  = 0.050 *cm;
   fTarLength   = 10.0 *cm;
+  fBeamline    = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -84,7 +85,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // https://github.com/gboon18/HallC_NPS
   //---------------------------------------------------------------------------
   
-  BuildBeamline();
+  if( fBeamline )
+    BuildBeamline();
+  else
+    BuildTarget();
   
   //--------------------------------------------------------------------------- 
   // Create six sector "NPS" electron arm
@@ -369,8 +373,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   for( int im=0 ; im < fNPSNmod ; im++ ) {
     nps_log[im]->SetVisAttributes(G4VisAttributes::Invisible);
-    hcal_log[im]->SetVisAttributes(blue);
-    //    hcal_log[im]->SetVisAttributes(G4VisAttributes::Invisible);
+    hcal_log[im]->SetVisAttributes(G4VisAttributes::Invisible);
   }
 
   //---------------------------------------------------------------------------
@@ -1091,3 +1094,44 @@ void DetectorConstruction::BuildBeamline()
   		    0 );
   
 }
+
+//---------------------------------------------------------------------------
+
+void DetectorConstruction::BuildTarget()
+{
+  
+  G4Material* VacuumMaterial                = fNistManager->FindOrBuildMaterial("G4_Galactic");
+  G4Material* TargetMaterial                = fNistManager->FindOrBuildMaterial("G4_lH2");
+  G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Al");
+  
+  const G4double     inch = 2.54*cm;
+  
+  G4double TargetLength          = fTarLength; //100.*mm;//(129.759 - 29.759 + 50.)*mm; 
+  G4double TargetRadius          = 0.5*50.*mm;//20.179*mm;
+  G4double TargetCellLength      = (0.125 + 150.)*mm;//(5. + 129.759 - 29.759 + 50.)*mm; //(129.887 - 29.759 + 50.)*mm; 
+  G4double TargetCellRadius      = (0.125 + 0.5*50.)*mm;//(20.179 + 5.)*mm;//20.32*mm;
+  G4double TargetWindowThickness = 0.125*mm;//5.*mm;//0.128*mm;
+  
+  //---------------------------------------------------------------------------
+  // Target Cell & Target
+  //---------------------------------------------------------------------------
+
+  G4Tubs* sTargetCell = new G4Tubs("TargetCell_sol",           
+				   0., TargetCellRadius, 0.5*TargetCellLength, 0.,twopi); 
+
+  G4LogicalVolume*   LogicTargetCell = new G4LogicalVolume(sTargetCell, TargetCellMaterial, "TargetCell_log");   
+
+  new G4PVPlacement(0, G4ThreeVector(), LogicTargetCell, "TargetCell_pos",  fexpHall_log, false, 0 );  
+
+  //---------------------------------------------------------------------------
+
+  G4Tubs* sTarget = new G4Tubs("Target_sol",         
+			       0., TargetRadius, 0.5*TargetLength, 0.,twopi); 
+
+  fLogicTarget = new G4LogicalVolume(sTarget, TargetMaterial, "Target_log");  
+  
+  new G4PVPlacement(0, G4ThreeVector(0., 0., 0.5*TargetWindowThickness), fLogicTarget, "Target_pos", LogicTargetCell, false, 0 ); 
+
+}
+
+//---------------------------------------------------------------------------
