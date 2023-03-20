@@ -64,7 +64,7 @@
 
 		Nparticles	-- number of primary particles in this event
   		weight		-- event weight (for consistency this should be per uA beam current)
-		flag		-- an integer to represent generator (reaction) type, ie beam=0, elastic=1, ...
+		flag		-- an integer to represent generator (reaction) type, ie elastic=1
 		vx[Nparticles]	-- vertex position vector
 		vy[Nparticles]
 		vz[Nparticles]
@@ -88,20 +88,14 @@
 
   	The output tree is called TOut and has the following branches:
 		Event_weight	-- event weight (for consistency this should be per uA beam current)
-		Event_flag	-- an integer to represent generator (reaction) type, ie beam=0, elastic=1, ...
+		Event_flag	-- an integer to represent generator (reaction) type, ie elastic=1
 		Primary_Nhits	-- number of primary particles in this event
 		Primary_*[]	-- arrays of primary variables, including pdg, energy, position, direction
 		Virtual_Nhits	-- number of virtual detector hits in this event
 		Virtual_*[]	-- arrays of virtual hit variables, including pdg, energy, position, direction,
-				   particle vertex, time, track id, mother track id and detector id variables:
-					Virtual_det (0 for Earm, 1 for hodoscope, 2 for Harm)
-					Virtual_mod (sector between 0 and 5)
-					Virtual_row and Virtual_col 
+				   particle vertex, time, detector id, track id, mother track id
 		Real_Nhits	-- number of real detector hits in this event
-		Real_*[]	-- arrays of real hit variables, including energy deposit, position, time 
-				   and detector id variables: 
-					Real_det (0 for Earm, 1 for hodoscope, 2 for Harm)
-					Real_mod (sector between 0 and 5)
-					Real_row and Real_col
+		Real_*[]	-- arrays of real hit variables, including energy deposit, position, time,
+				   detector id
 
 
