@@ -210,19 +210,19 @@ void OutputManager::FillVirtualArray( Int_t hitn )
       fVirtual_det[hitn] = 0;                               // NPS
       fVirtual_mod[hitn] = (fVirtual_detid-1)/160;          // Module
       fVirtual_row[hitn] = (fVirtual_detid-1)%160/32;       // Row
-      fVirtual_row[hitn] = (fVirtual_detid-1)%160%32;       // Column
+      fVirtual_col[hitn] = (fVirtual_detid-1)%160%32;       // Column
     }
     else if( fVirtual_detid >= 961 && fVirtual_detid <= 8160 ) { 
       fVirtual_det[hitn] = 1;                               // Hodoscope
       fVirtual_mod[hitn] = (fVirtual_detid-961)/1200;       // Module
       fVirtual_row[hitn] = (fVirtual_detid-961)%1200/80;    // Row
-      fVirtual_row[hitn] = (fVirtual_detid-961)%1200%80;    // Column
+      fVirtual_col[hitn] = (fVirtual_detid-961)%1200%80;    // Column
     }
     else if( fVirtual_detid >= 8161 && fVirtual_detid <= 8448 ) { 
       fVirtual_det[hitn] = 2;                               // HCAL
       fVirtual_mod[hitn] = (fVirtual_detid-8161)/48;        // Module
       fVirtual_row[hitn] = (fVirtual_detid-8161)%48/16;     // Row
-      fVirtual_row[hitn] = (fVirtual_detid-8161)%48%16;     // Column
+      fVirtual_col[hitn] = (fVirtual_detid-8161)%48%16;     // Column
     }
 
     fVirtual_Nhits++;
@@ -256,19 +256,19 @@ void OutputManager::FillRealArray( G4int hitn )
       fReal_det[hitn] = 0;                            // NPS
       fReal_mod[hitn] = (fReal_detid-1)/160;          // Module
       fReal_row[hitn] = (fReal_detid-1)%160/32;       // Row
-      fReal_row[hitn] = (fReal_detid-1)%160%32;       // Column
+      fReal_col[hitn] = (fReal_detid-1)%160%32;       // Column
     }
     else if( fReal_detid >= 961 && fReal_detid <= 8160 ) { 
       fReal_det[hitn] = 1;                            // Hodoscope
       fReal_mod[hitn] = (fReal_detid-961)/1200;       // Module
       fReal_row[hitn] = (fReal_detid-961)%1200/80;    // Row
-      fReal_row[hitn] = (fReal_detid-961)%1200%80;    // Column
+      fReal_col[hitn] = (fReal_detid-961)%1200%80;    // Column
     }
     else if( fReal_detid >= 8161 && fReal_detid <= 8448 ) { 
       fReal_det[hitn] = 2;                            // HCAL
       fReal_mod[hitn] = (fReal_detid-8161)/48;        // Module
       fReal_row[hitn] = (fReal_detid-8161)%48/16;     // Row
-      fReal_row[hitn] = (fReal_detid-8161)%48%16;     // Column
+      fReal_col[hitn] = (fReal_detid-8161)%48%16;     // Column
     }
     
     fReal_Nhits++;
