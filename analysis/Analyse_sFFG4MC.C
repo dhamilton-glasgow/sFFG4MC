@@ -223,6 +223,9 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
     Event_weight = Event_weight * 1/ntrees;   // this only works if nevents is the same for all trees in the chain
 
+    if (Event_weight == 0 ) 
+      Event_weight = 1;
+
     // Primary variables
     hPrim_N->Fill( (Float_t)Primary_Nhits );
     for( int i =0; i < Primary_Nhits; i++ ) {

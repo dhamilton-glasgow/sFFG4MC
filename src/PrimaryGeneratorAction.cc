@@ -60,8 +60,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
     fFlag           = 0;
     fNPrimParticles = 1;
-    fWeight         = (1/fNevents)*1e-6/1.602e-19;  // event weight per uA beam current
-
+    fWeight         = (1./fNevents)*1e-6/1.602e-19;  // event weight per uA beam current
+    
     fVx[0]          = fParticleSource->GetParticlePosition().getX();
     fVy[0]          = fParticleSource->GetParticlePosition().getY();
     fVz[0]          = fParticleSource->GetParticlePosition().getZ();
