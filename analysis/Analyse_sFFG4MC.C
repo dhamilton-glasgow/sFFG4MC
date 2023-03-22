@@ -21,12 +21,12 @@ using namespace std;
 const Bool_t ApplyThresh     = true;
 const Bool_t ApplyWindow     = true;
 
-const Float_t Earm_threshold = 5;
-const Float_t Earm_window    = 1e6;
-const Float_t Harm_threshold = 0.5;
-const Float_t Harm_window    = 1e6;
-const Float_t Hodo_threshold = -1;
-const Float_t Hodo_window    = 1e6;
+const Float_t Earm_threshold = 100;
+const Float_t Earm_window    = 200;
+const Float_t Harm_threshold = 50;
+const Float_t Harm_window    = 200;
+const Float_t Hodo_threshold = 0.05;
+const Float_t Hodo_window    = 200;
 
 void Analyse_sFFG4MC( Int_t run_no = 14 ) { 
   
@@ -176,38 +176,38 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
   TH1F* hPrim_pdg = new TH1F("hPrim_pdg",  "", 100,-30.,30.);
   TH2F* hPrim_xy  = new TH2F("hPrim_xy", "", 100,-1.0,1.0, 100,-1.,1. );
 
-  TH1F* hEarm_N   = new TH1F("hEarm_N",  "", 100,0.,200.);
+  TH1F* hEarm_N   = new TH1F("hEarm_N",  "", 100,0.,960.);
   TH1F* hEarm_E   = new TH1F("hEarm_E",  "", 100,0.,200.);
   TH1F* hEarm_z   = new TH1F("hEarm_z",  "", 100,0.,500.);
   TH1F* hEarm_pdg = new TH1F("hEarm_pdg",  "", 100,-30.,30.);
   TH2F* hEarm_xy  = new TH2F("hEarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hHodo_N   = new TH1F("hHodo_N",  "", 100,0.,200.);
+  TH1F* hHodo_N   = new TH1F("hHodo_N",  "", 100,0.,7200.);
   TH1F* hHodo_E   = new TH1F("hHodo_E",  "", 100,0.,50.);
   TH1F* hHodo_z   = new TH1F("hHodo_z",  "", 100,0.,500.);
   TH1F* hHodo_pdg = new TH1F("hHodo_pdg",  "", 100,-30.,30.);
   TH2F* hHodo_xy  = new TH2F("hHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hHarm_N   = new TH1F("hHarm_N",  "", 100,0.,200.);
+  TH1F* hHarm_N   = new TH1F("hHarm_N",  "", 100,0.,288.);
   TH1F* hHarm_E   = new TH1F("hHarm_E",  "", 100,0.,50.);
   TH1F* hHarm_z   = new TH1F("hHarm_z",  "", 100,0.,500.);
   TH1F* hHarm_pdg = new TH1F("hHarm_pdg",  "", 100,-30.,30.);
   TH2F* hHarm_xy  = new TH2F("hHarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealEarm_N   = new TH1F("hRealEarm_N",  "", 100,0.,200.);
-  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,100.);
+  TH1F* hRealEarm_N   = new TH1F("hRealEarm_N",  "", 100,0.,960.);
+  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,200.);
   TH1F* hRealEarm_z   = new TH1F("hRealEarm_z",  "", 100,0.,500.);
   TH1F* hRealEarm_t   = new TH1F("hRealEarm_t",  "", 100, 0.,200.);
   TH2F* hRealEarm_xy  = new TH2F("hRealEarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealHodo_N   = new TH1F("hRealHodo_N",  "", 100,0.,200.);
+  TH1F* hRealHodo_N   = new TH1F("hRealHodo_N",  "", 100,0.,7200.);
   TH1F* hRealHodo_E   = new TH1F("hRealHodo_E",  "", 100,0.,0.5);
   TH1F* hRealHodo_z   = new TH1F("hRealHodo_z",  "", 100,0.,500.);
   TH1F* hRealHodo_t   = new TH1F("hRealHodo_t",  "", 100, 0.,200.);
   TH2F* hRealHodo_xy  = new TH2F("hRealHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", 100,0.,200.);
-  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,20.);
+  TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", 100,0.,288.);
+  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,200.);
   TH1F* hRealHarm_z   = new TH1F("hRealHarm_z",  "", 100,0.,500.);
   TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,200.);
   TH2F* hRealHarm_xy  = new TH2F("hRealHarm_xy", "", 100,-500.,500., 100,-500.,500. );
@@ -230,37 +230,41 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     hPrim_N->Fill( (Float_t)Primary_Nhits );
     for( int i =0; i < Primary_Nhits; i++ ) {
 
-      hPrim_E->Fill( Primary_E[i] , Event_weight/1e6 );
-      hPrim_xy->Fill( Primary_x[i], Primary_y[i] , Event_weight/1e6 );
-      hPrim_z->Fill( Primary_z[i] , Event_weight/1e6 );
-      hPrim_pdg->Fill( (Float_t)Primary_pdg[i] , Event_weight/1e6 );
+      hPrim_E->Fill( Primary_E[i] , Event_weight );
+      hPrim_xy->Fill( Primary_x[i], Primary_y[i] , Event_weight );
+      hPrim_z->Fill( Primary_z[i] , Event_weight );
+      hPrim_pdg->Fill( (Float_t)Primary_pdg[i] , Event_weight );
     }
 
     // Virutal variables
     for( int i =0; i < Virtual_Nhits; i++ ) {
 
       if( Virtual_det[i] == 0 ) {
-	hEarm_N->Fill( (Float_t)Virtual_Nhits , Event_weight/1e6 );
-	hEarm_E->Fill( Virtual_E[i] , Event_weight/1e6 );
-	hEarm_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight/1e6 );
-	hEarm_z->Fill( Virtual_z[i] , Event_weight/1e6 );
-	hEarm_pdg->Fill( (Float_t)Virtual_pdg[i] , Event_weight/1e6 );
+
+	Int_t id = (Virtual_mod[i]*160)+(Virtual_row[i]*Virtual_col[i]);
+	hEarm_N->Fill( (Float_t)id , Event_weight );
+	hEarm_E->Fill( Virtual_E[i] , Event_weight );
+	hEarm_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight );
+	hEarm_z->Fill( Virtual_z[i] , Event_weight );
+	hEarm_pdg->Fill( (Float_t)Virtual_pdg[i] , Event_weight );
       }
 
       if( Virtual_det[i] == 1 ) {
-	hHodo_N->Fill( (Float_t)Virtual_Nhits , Event_weight/1e6 );
-	hHodo_E->Fill( Virtual_E[i] , Event_weight/1e6 );
-	hHodo_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight/1e6 );
-	hHodo_z->Fill( Virtual_z[i] , Event_weight/1e6 );
-	hHodo_pdg->Fill( (Float_t)Virtual_pdg[i] , Event_weight/1e6 );
+	Int_t id = (Virtual_mod[i]*1200)+(Virtual_row[i]*Virtual_col[i]);
+	hHodo_N->Fill( id, Event_weight );
+	hHodo_E->Fill( Virtual_E[i] , Event_weight );
+	hHodo_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight );
+	hHodo_z->Fill( Virtual_z[i] , Event_weight );
+	hHodo_pdg->Fill( (Float_t)Virtual_pdg[i] , Event_weight );
       }
 
       if( Virtual_det[i] == 2 ) {
-	hHarm_N->Fill( (Float_t)Virtual_Nhits, Event_weight/1e6 );
-	hHarm_E->Fill( Virtual_E[i], Event_weight/1e6 );
-	hHarm_xy->Fill( Virtual_x[i], Virtual_y[i], Event_weight/1e6 );
-	hHarm_z->Fill( Virtual_z[i], Event_weight/1e6 );
-	hHarm_pdg->Fill( (Float_t)Virtual_pdg[i], Event_weight/1e6 );
+	Int_t id = (Virtual_mod[i]*48)+(Virtual_row[i]*Virtual_col[i]);
+	hHarm_N->Fill( (Float_t)id, Event_weight );
+	hHarm_E->Fill( Virtual_E[i], Event_weight );
+	hHarm_xy->Fill( Virtual_x[i], Virtual_y[i], Event_weight );
+	hHarm_z->Fill( Virtual_z[i], Event_weight );
+	hHarm_pdg->Fill( (Float_t)Virtual_pdg[i], Event_weight );
       }
     }
 
@@ -270,11 +274,13 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       if( Real_det[i] == 0 ) {
 	if( ApplyThresh && Real_edep[i] > Earm_threshold ) { 
 	  if( ApplyWindow && Real_t[i] < Earm_window ) {
-	    hRealEarm_N->Fill( (Float_t)Real_Nhits, Event_weight/1e6 );
-	    hRealEarm_E->Fill( Real_edep[i], Event_weight/1e6 );
-	    hRealEarm_xy->Fill( Real_x[i], Real_y[i], Event_weight/1e6 );
-	    hRealEarm_z->Fill( Real_z[i], Event_weight/1e6 );
-	    hRealEarm_t->Fill( (Float_t)Real_t[i], Event_weight/1e6 );
+
+	    Int_t id = (Real_mod[i]*160)+(Real_row[i]*Real_col[i]);
+	    hRealEarm_N->Fill( (Float_t)id, Event_weight );
+	    hRealEarm_E->Fill( Real_edep[i], Event_weight );
+	    hRealEarm_xy->Fill( Real_x[i], Real_y[i], Event_weight );
+	    hRealEarm_z->Fill( Real_z[i], Event_weight );
+	    hRealEarm_t->Fill( (Float_t)Real_t[i], Event_weight );
 	  }
 	}
       }
@@ -282,11 +288,13 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       if( Real_det[i] == 1 ) {
 	if( ApplyThresh && Real_edep[i] > Hodo_threshold ) {
 	  if( ApplyWindow && Real_t[i] < Hodo_window ) {
-	    hRealHodo_N->Fill( (Float_t)Real_Nhits, Event_weight/1e6 );
-	    hRealHodo_E->Fill( Real_edep[i], Event_weight/1e6 );
- 	    hRealHodo_xy->Fill( Real_x[i], Real_y[i], Event_weight/1e6 );
-	    hRealHodo_z->Fill( Real_z[i], Event_weight/1e6 );
-	    hRealHodo_t->Fill( (Float_t)Real_t[i], Event_weight/1e6 );
+
+	    Int_t id = (Real_mod[i]*1200)+(Real_row[i]*Real_col[i]);
+	    hRealHodo_N->Fill( (Float_t)id, Event_weight );
+	    hRealHodo_E->Fill( Real_edep[i], Event_weight );
+ 	    hRealHodo_xy->Fill( Real_x[i], Real_y[i], Event_weight );
+	    hRealHodo_z->Fill( Real_z[i], Event_weight );
+	    hRealHodo_t->Fill( (Float_t)Real_t[i], Event_weight );
 	  }
 	}
       }
@@ -294,11 +302,12 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       if( Real_det[i] == 2 ) {
 	if( ApplyThresh && Real_edep[i] > Harm_threshold ) {
 	  if( ApplyWindow && Real_t[i] < Harm_window ) {
-	    hRealHarm_N->Fill( (Float_t)Real_Nhits, Event_weight/1e6 );
-	    hRealHarm_E->Fill( Real_edep[i], Event_weight/1e6 );
-	    hRealHarm_xy->Fill( Real_x[i], Real_y[i], Event_weight/1e6 );
-	    hRealHarm_z->Fill( Real_z[i], Event_weight/1e6 );
-	    hRealHarm_t->Fill( (Float_t)Real_t[i], Event_weight/1e6 );
+	    Int_t id = (Real_mod[i]*48)+(Real_row[i]*Real_col[i]);
+	    hRealHarm_N->Fill( (Float_t)id, Event_weight );
+	    hRealHarm_E->Fill( Real_edep[i], Event_weight );
+	    hRealHarm_xy->Fill( Real_x[i], Real_y[i], Event_weight );
+	    hRealHarm_z->Fill( Real_z[i], Event_weight );
+	    hRealHarm_t->Fill( (Float_t)Real_t[i], Event_weight );
 	  }
 	}
       }
@@ -330,6 +339,13 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
   tex->Draw();
   
   tex = new TLatex( 0.24, 0.3, "Primaries");
+  tex->SetNDC(1);
+  tex->SetTextFont(42);
+  tex->SetTextColor(1);
+  tex->SetTextSize(0.095);
+  tex->Draw();
+
+  tex = new TLatex( 0.14, 0.1, Form("Weight = %2.1f", Event_weight ));
   tex->SetNDC(1);
   tex->SetTextFont(42);
   tex->SetTextColor(1);

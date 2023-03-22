@@ -7,6 +7,7 @@
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Trd.hh"
+#include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -1105,23 +1106,70 @@ void DetectorConstruction::BuildTarget()
   G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Al");
   
   const G4double     inch = 2.54*cm;
+
+  G4double ChamberInnerRadius   = 20.5*inch;
+  G4double ChamberHight         = 3*24.25*2*inch;//20180313 to be modified
+
+  G4double BeamlineInnerRadius   = 200. *mm;
+  G4double BeamlineHight         = 1300. *cm;
   
   G4double TargetLength          = fTarLength; //100.*mm;//(129.759 - 29.759 + 50.)*mm; 
   G4double TargetRadius          = 0.5*50.*mm;//20.179*mm;
   G4double TargetCellLength      = (0.125 + 150.)*mm;//(5. + 129.759 - 29.759 + 50.)*mm; //(129.887 - 29.759 + 50.)*mm; 
   G4double TargetCellRadius      = (0.125 + 0.5*50.)*mm;//(20.179 + 5.)*mm;//20.32*mm;
   G4double TargetWindowThickness = 0.125*mm;//5.*mm;//0.128*mm;
+
+  //---------------------------------------------------------------------------
+  // Vacuum inside scattering chamber and exit beamline
+  //---------------------------------------------------------------------------
+
+  G4RotationMatrix *xChambRot = new G4RotationMatrix;  
+  xChambRot->rotateX(90*degree);                     
+
+  G4Tubs* sChamberInner = new G4Tubs("ChamberInner_sol",
+				     0.,
+				     ChamberInnerRadius,
+				     0.5*ChamberHight,
+				     0.,
+				     twopi);
+
+//   G4LogicalVolume* LogicInnerChamber = new G4LogicalVolume(sChamberInner, VacuumMaterial, "ChamberInner_log");
+  
+//   new G4PVPlacement(xChambRot, G4ThreeVector(), LogicInnerChamber, "ChamberInner_pos", fexpHall_log, false, 0 );
+
+  G4Tubs* sBeamlineInner = new G4Tubs("BeamlineInner_sol",
+				      0.,
+				      BeamlineInnerRadius,
+				      BeamlineHight,
+				      0.,
+				      twopi);
+
+  G4UnionSolid* vacUnion = new G4UnionSolid("vacUnion", sChamberInner, sBeamlineInner, xChambRot, G4ThreeVector(0., -BeamlineHight, 0.));
+
+  G4LogicalVolume* LogicInnerChamber = new G4LogicalVolume(vacUnion, VacuumMaterial, "ChamberInner_log");
+  
+  new G4PVPlacement(xChambRot, G4ThreeVector(), LogicInnerChamber, "ChamberInner_pos", fexpHall_log, false, 0 );
+
+  //---------------------------------------------------------------------------
+  
+
+//   G4LogicalVolume* LogicInnerBeamline = new G4LogicalVolume(sBeamlineInner, VacuumMaterial, "BeamlineInner_log");
+  
+//   new G4PVPlacement(0, G4ThreeVector(), LogicInnerBeamline, "BeamlineInner_pos", fexpHall_log, false, 0 );
   
   //---------------------------------------------------------------------------
   // Target Cell & Target
   //---------------------------------------------------------------------------
+
+  G4RotationMatrix *xTargetRot = new G4RotationMatrix;  
+  xTargetRot->rotateX(-90*degree);                     
 
   G4Tubs* sTargetCell = new G4Tubs("TargetCell_sol",           
 				   0., TargetCellRadius, 0.5*TargetCellLength, 0.,twopi); 
 
   G4LogicalVolume*   LogicTargetCell = new G4LogicalVolume(sTargetCell, TargetCellMaterial, "TargetCell_log");   
 
-  new G4PVPlacement(0, G4ThreeVector(), LogicTargetCell, "TargetCell_pos",  fexpHall_log, false, 0 );  
+  new G4PVPlacement(xTargetRot, G4ThreeVector(), LogicTargetCell, "TargetCell_pos",  LogicInnerChamber, false, 0 );  
 
   //---------------------------------------------------------------------------
 
