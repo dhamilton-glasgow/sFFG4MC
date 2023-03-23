@@ -110,14 +110,14 @@ void OutputManager::ZeroArray()
   fPrimary_Nhits   = 0;
 
   for ( Int_t i = 0; i < fMaxprim; i++ ) {
-    fPrimary_pdg[i]    = 0;  
-    fPrimary_E[i]      = 0;  
-    fPrimary_xpos[i]   = 0;  
-    fPrimary_ypos[i]   = 0;  
-    fPrimary_zpos[i]   = 0;  
-    fPrimary_px[i]     = 0;  
-    fPrimary_py[i]     = 0;  
-    fPrimary_pz[i]     = 0;  
+    fPrimary_pdg[i]    = -1e12;
+    fPrimary_E[i]      = -1e12;
+    fPrimary_xpos[i]   = -1e12;
+    fPrimary_ypos[i]   = -1e12;
+    fPrimary_zpos[i]   = -1e12;
+    fPrimary_px[i]     = -1e12;
+    fPrimary_py[i]     = -1e12;
+    fPrimary_pz[i]     = -1e12;
   }
 
   fVirtual_pdef    = NULL;
@@ -140,34 +140,34 @@ void OutputManager::ZeroArray()
   fReal_Nhits      = 0;
 
   for ( Int_t i = 0; i < fMaxhits; i++ ) {
-    fVirtual_pdg[i]     = 0;
-    fVirtual_tid[i]     = 0;  
-    fVirtual_pid[i]     = 0;  
-    fVirtual_E[i]       = 0;
-    fVirtual_t[i]       = 0;
-    fVirtual_xpos[i]    = 0;
-    fVirtual_ypos[i]    = 0;
-    fVirtual_zpos[i]    = 0;
-    fVirtual_px[i]      = 0;
-    fVirtual_py[i]      = 0;
-    fVirtual_pz[i]      = 0;
-    fVirtual_vx[i]      = 0;
-    fVirtual_vy[i]      = 0;
-    fVirtual_vz[i]      = 0;
-    fVirtual_det[i]     = 0;
-    fVirtual_mod[i]     = 0;
-    fVirtual_row[i]     = 0;
-    fVirtual_col[i]     = 0;
+    fVirtual_pdg[i]     = -1e12;
+    fVirtual_tid[i]     = -1e12;
+    fVirtual_pid[i]     = -1e12; 
+    fVirtual_E[i]       = -1e12;
+    fVirtual_t[i]       = -1e12;
+    fVirtual_xpos[i]    = -1e12;
+    fVirtual_ypos[i]    = -1e12;
+    fVirtual_zpos[i]    = -1e12;
+    fVirtual_px[i]      = -1e12;
+    fVirtual_py[i]      = -1e12;
+    fVirtual_pz[i]      = -1e12;
+    fVirtual_vx[i]      = -1e12;
+    fVirtual_vy[i]      = -1e12;
+    fVirtual_vz[i]      = -1e12;
+    fVirtual_det[i]     = -1e12;
+    fVirtual_mod[i]     = -1e12;
+    fVirtual_row[i]     = -1e12;
+    fVirtual_col[i]     = -1e12;
 
-    fReal_Edep[i]       = 0;
-    fReal_t[i]          = 0;
-    fReal_xpos[i]       = 0;
-    fReal_ypos[i]       = 0;
-    fReal_zpos[i]       = 0;
-    fReal_det[i]        = 0;
-    fReal_mod[i]        = 0;
-    fReal_row[i]        = 0;
-    fReal_col[i]        = 0;
+    fReal_Edep[i]       = -1e12;
+    fReal_t[i]          = -1e12;
+    fReal_xpos[i]       = -1e12;
+    fReal_ypos[i]       = -1e12;
+    fReal_zpos[i]       = -1e12;
+    fReal_det[i]        = -1e12;
+    fReal_mod[i]        = -1e12;
+    fReal_row[i]        = -1e12;
+    fReal_col[i]        = -1e12;
   }
 
 }
