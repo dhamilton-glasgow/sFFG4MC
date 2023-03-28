@@ -1,0 +1,40 @@
+##################################################################
+# Set geometry options
+##################################################################
+
+/sFFG4MC/detector/setBeamline 0
+/sFFG4MC/detector/setShieldThickness 10 cm
+/sFFG4MC/detector/update
+
+##################################################################
+# Set physics model options
+##################################################################
+
+/sFFG4MC/physics/addPhysics QGSP_BIC_EMY
+/run/initialize
+
+##################################################################
+# Set output options
+##################################################################
+
+/sFFG4MC/output/setOutputFile vis_root.root
+
+##################################################################
+# Set visualisation options
+##################################################################
+
+/vis/scene/create
+/vis/open OGLS 800x800-0+0
+/vis/scene/add/trajectories
+/vis/scene/add/magneticField
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/select viewer-0
+/vis/viewer/rebuild
+
+##################################################################
+# Set generator options
+##################################################################
+
+/sFFG4MC/generator/Mode 1
+/sFFG4MC/generator/Nevents 1
+/sFFG4MC/generator/InputFile macros/testgen.root

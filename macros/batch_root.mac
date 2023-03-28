@@ -1,0 +1,27 @@
+##################################################################
+# Set geometry options
+##################################################################
+
+/sFFG4MC/detector/setBeamline 0
+/sFFG4MC/detector/setShieldThickness 10 cm
+/sFFG4MC/detector/update
+
+##################################################################
+# Set physics model options
+##################################################################
+
+/sFFG4MC/physics/addPhysics QGSP_BIC_EMY
+/run/initialize
+
+##################################################################
+# Set output options
+##################################################################
+
+/sFFG4MC/output/setOutputFile vis_root.root
+
+##################################################################
+# Set generator options
+##################################################################
+
+/sFFG4MC/generator/Mode 1
+/sFFG4MC/generator/InputFile macros/testgen.root
