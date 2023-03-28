@@ -21,14 +21,14 @@ using namespace std;
 const Bool_t ApplyThresh     = true;
 const Bool_t ApplyWindow     = true;
 
-const Float_t Earm_threshold = 100;
-const Float_t Earm_window    = 200;
-const Float_t Harm_threshold = 50;
-const Float_t Harm_window    = 200;
-const Float_t Hodo_threshold = 0.05;
-const Float_t Hodo_window    = 200;
+const Float_t Earm_threshold = 30;
+const Float_t Earm_window    = 50;
+const Float_t Harm_threshold = 10;
+const Float_t Harm_window    = 50;
+const Float_t Hodo_threshold = -0.1;
+const Float_t Hodo_window    = 50;
 
-void Analyse_sFFG4MC( Int_t run_no = 14 ) { 
+void Analyse_sFFG4MC( Int_t run_no = 1 ) { 
   
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   gStyle->SetStripDecimals(kFALSE);
 
-  TFile *outfile = new TFile( Form("anasFF_%d.root", run_no),"RECREATE");
+  //  TFile *outfile = new TFile( Form("anasFF_%d.root", run_no),"RECREATE");
 
   Long64_t nentries = TOut->GetEntries();
   Int_t ntrees      = TOut->GetNtrees();
@@ -177,39 +177,39 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
   TH2F* hPrim_xy  = new TH2F("hPrim_xy", "", 100,-1.0,1.0, 100,-1.,1. );
 
   TH1F* hEarm_N   = new TH1F("hEarm_N",  "", 100,0.,960.);
-  TH1F* hEarm_E   = new TH1F("hEarm_E",  "", 100,0.,200.);
+  TH1F* hEarm_E   = new TH1F("hEarm_E",  "", 100,0.,500.);
   TH1F* hEarm_z   = new TH1F("hEarm_z",  "", 100,0.,500.);
   TH1F* hEarm_pdg = new TH1F("hEarm_pdg",  "", 100,-30.,30.);
   TH2F* hEarm_xy  = new TH2F("hEarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hHodo_N   = new TH1F("hHodo_N",  "", 100,0.,7200.);
-  TH1F* hHodo_E   = new TH1F("hHodo_E",  "", 100,0.,50.);
+  TH1F* hHodo_E   = new TH1F("hHodo_E",  "", 100,0.,500.);
   TH1F* hHodo_z   = new TH1F("hHodo_z",  "", 100,0.,500.);
   TH1F* hHodo_pdg = new TH1F("hHodo_pdg",  "", 100,-30.,30.);
   TH2F* hHodo_xy  = new TH2F("hHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hHarm_N   = new TH1F("hHarm_N",  "", 100,0.,288.);
-  TH1F* hHarm_E   = new TH1F("hHarm_E",  "", 100,0.,50.);
+  TH1F* hHarm_E   = new TH1F("hHarm_E",  "", 100,0.,500.);
   TH1F* hHarm_z   = new TH1F("hHarm_z",  "", 100,0.,500.);
   TH1F* hHarm_pdg = new TH1F("hHarm_pdg",  "", 100,-30.,30.);
   TH2F* hHarm_xy  = new TH2F("hHarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealEarm_N   = new TH1F("hRealEarm_N",  "", 100,0.,960.);
-  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,200.);
-  TH1F* hRealEarm_z   = new TH1F("hRealEarm_z",  "", 100,0.,500.);
-  TH1F* hRealEarm_t   = new TH1F("hRealEarm_t",  "", 100, 0.,200.);
+  TH1F* hRealEarm_N   = new TH1F("hRealEarm_N",  "", 960,0.,960.);
+  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,300.);
+  TH1F* hRealEarm_z   = new TH1F("hRealEarm_z",  "", 100,0.,800.);
+  TH1F* hRealEarm_t   = new TH1F("hRealEarm_t",  "", 100, 0.,50.);
   TH2F* hRealEarm_xy  = new TH2F("hRealEarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealHodo_N   = new TH1F("hRealHodo_N",  "", 100,0.,7200.);
-  TH1F* hRealHodo_E   = new TH1F("hRealHodo_E",  "", 100,0.,0.5);
+  TH1F* hRealHodo_N   = new TH1F("hRealHodo_N",  "", 7200,0.,7200.);
+  TH1F* hRealHodo_E   = new TH1F("hRealHodo_E",  "", 100,0.,0.3);
   TH1F* hRealHodo_z   = new TH1F("hRealHodo_z",  "", 100,0.,500.);
-  TH1F* hRealHodo_t   = new TH1F("hRealHodo_t",  "", 100, 0.,200.);
+  TH1F* hRealHodo_t   = new TH1F("hRealHodo_t",  "", 100, 0.,50.);
   TH2F* hRealHodo_xy  = new TH2F("hRealHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
-  TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", 100,0.,288.);
+  TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", 288,0.,288.);
   TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,200.);
   TH1F* hRealHarm_z   = new TH1F("hRealHarm_z",  "", 100,0.,500.);
-  TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,200.);
+  TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,50.);
   TH2F* hRealHarm_xy  = new TH2F("hRealHarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
   //-----------------------------------------------------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
       if( Virtual_det[i] == 0 ) {
 
-	Int_t id = (Virtual_mod[i]*160)+(Virtual_row[i]*Virtual_col[i]);
+	Int_t id = (Virtual_mod[i]*160)+((Virtual_row[i]+1)*(Virtual_col[i]+1));
 	hEarm_N->Fill( (Float_t)id , Event_weight );
 	hEarm_E->Fill( Virtual_E[i] , Event_weight );
 	hEarm_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight );
@@ -250,7 +250,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       }
 
       if( Virtual_det[i] == 1 ) {
-	Int_t id = (Virtual_mod[i]*1200)+(Virtual_row[i]*Virtual_col[i]);
+	Int_t id = (Virtual_mod[i]*1200)+((Virtual_row[i]+1)*(Virtual_col[i]+1));
 	hHodo_N->Fill( id, Event_weight );
 	hHodo_E->Fill( Virtual_E[i] , Event_weight );
 	hHodo_xy->Fill( Virtual_x[i], Virtual_y[i] , Event_weight );
@@ -259,7 +259,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       }
 
       if( Virtual_det[i] == 2 ) {
-	Int_t id = (Virtual_mod[i]*48)+(Virtual_row[i]*Virtual_col[i]);
+	Int_t id = (Virtual_mod[i]*48)+((Virtual_row[i]+1)*(Virtual_col[i]+1));
 	hHarm_N->Fill( (Float_t)id, Event_weight );
 	hHarm_E->Fill( Virtual_E[i], Event_weight );
 	hHarm_xy->Fill( Virtual_x[i], Virtual_y[i], Event_weight );
@@ -275,7 +275,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 	if( ApplyThresh && Real_edep[i] > Earm_threshold ) { 
 	  if( ApplyWindow && Real_t[i] < Earm_window ) {
 
-	    Int_t id = (Real_mod[i]*160)+(Real_row[i]*Real_col[i]);
+	    Int_t id = (Real_mod[i]*160)+((Real_row[i]+1)*(Real_col[i]+1));
 	    hRealEarm_N->Fill( (Float_t)id, Event_weight );
 	    hRealEarm_E->Fill( Real_edep[i], Event_weight );
 	    hRealEarm_xy->Fill( Real_x[i], Real_y[i], Event_weight );
@@ -288,8 +288,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       if( Real_det[i] == 1 ) {
 	if( ApplyThresh && Real_edep[i] > Hodo_threshold ) {
 	  if( ApplyWindow && Real_t[i] < Hodo_window ) {
-
-	    Int_t id = (Real_mod[i]*1200)+(Real_row[i]*Real_col[i]);
+	    Int_t id = (Real_mod[i]*1200)+((Real_row[i]+1)*(Real_col[i]+1));
 	    hRealHodo_N->Fill( (Float_t)id, Event_weight );
 	    hRealHodo_E->Fill( Real_edep[i], Event_weight );
  	    hRealHodo_xy->Fill( Real_x[i], Real_y[i], Event_weight );
@@ -302,7 +301,7 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
       if( Real_det[i] == 2 ) {
 	if( ApplyThresh && Real_edep[i] > Harm_threshold ) {
 	  if( ApplyWindow && Real_t[i] < Harm_window ) {
-	    Int_t id = (Real_mod[i]*48)+(Real_row[i]*Real_col[i]);
+	    Int_t id = (Real_mod[i]*48)+((Real_row[i]+1)*(Real_col[i]+1));
 	    hRealHarm_N->Fill( (Float_t)id, Event_weight );
 	    hRealHarm_E->Fill( Real_edep[i], Event_weight );
 	    hRealHarm_xy->Fill( Real_x[i], Real_y[i], Event_weight );
@@ -354,17 +353,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cPrim->cd(2);
   hPrim_N->SetLineColor(4);
-  hPrim_N->Draw("hist c");
+  hPrim_N->Draw("hist e4");
   hPrim_N->GetXaxis()->SetTitle("Num Primary Particles");
 
   cPrim->cd(3);
   hPrim_pdg->SetLineColor(4);
-  hPrim_pdg->Draw("hist c");
+  hPrim_pdg->Draw("hist e4");
   hPrim_pdg->GetXaxis()->SetTitle("PDG code");
 
   cPrim->cd(4);
   hPrim_E->SetLineColor(4);
-  hPrim_E->Draw("hist c");
+  hPrim_E->Draw("hist e4");
   hPrim_E->GetXaxis()->SetTitle("Kinetic Energy [MeV]");
 
   cPrim->cd(5);
@@ -374,11 +373,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cPrim->cd(6);
   hPrim_z->SetLineColor(4);
-  hPrim_z->Draw("hist c");
+  hPrim_z->Draw("hist e4");
   hPrim_z->GetXaxis()->SetTitle("z [cm]");
 
   cPrim->Print(Form("tempa-%d.pdf", run_no));  
-  cPrim->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -410,17 +408,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cVirt1->cd(2);
   hEarm_N->SetLineColor(4);
-  hEarm_N->Draw("hist c");
+  hEarm_N->Draw("hist e4");
   hEarm_N->GetXaxis()->SetTitle("Num Hits");
 
   cVirt1->cd(3);
   hEarm_pdg->SetLineColor(4);
-  hEarm_pdg->Draw("hist c");
+  hEarm_pdg->Draw("hist e4");
   hEarm_pdg->GetXaxis()->SetTitle("PDG code");
 
   cVirt1->cd(4)->SetLogy(1);
   hEarm_E->SetLineColor(4);
-  hEarm_E->Draw("hist c");
+  hEarm_E->Draw("hist e4");
   hEarm_E->GetXaxis()->SetTitle("Kinetic Energy [MeV]");
 
   cVirt1->cd(5);
@@ -430,11 +428,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cVirt1->cd(6);
   hEarm_z->SetLineColor(4);
-  hEarm_z->Draw("hist c");
+  hEarm_z->Draw("hist e4");
   hEarm_z->GetXaxis()->SetTitle("z [cm]");
 
   cVirt1->Print(Form("tempb-%d.pdf", run_no));  
-  cVirt1->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -466,17 +463,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cVirt2->cd(2);
   hHodo_N->SetLineColor(4);
-  hHodo_N->Draw("hist c");
+  hHodo_N->Draw("hist e4");
   hHodo_N->GetXaxis()->SetTitle("Num Hits");
 
   cVirt2->cd(3);
   hHodo_pdg->SetLineColor(4);
-  hHodo_pdg->Draw("hist c");
+  hHodo_pdg->Draw("hist e4");
   hHodo_pdg->GetXaxis()->SetTitle("PDG code");
 
   cVirt2->cd(4)->SetLogy(1);
   hHodo_E->SetLineColor(4);
-  hHodo_E->Draw("hist c");
+  hHodo_E->Draw("hist e4");
   hHodo_E->GetXaxis()->SetTitle("Kinetic Energy [MeV]");
 
   cVirt2->cd(5);
@@ -486,11 +483,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cVirt2->cd(6);
   hHodo_z->SetLineColor(4);
-  hHodo_z->Draw("hist c");
+  hHodo_z->Draw("hist e4");
   hHodo_z->GetXaxis()->SetTitle("z [cm]");
 
   cVirt2->Print(Form("tempc-%d.pdf", run_no));  
-  cVirt2->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -522,17 +518,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cVirt3->cd(2);
   hHarm_N->SetLineColor(4);
-  hHarm_N->Draw("hist c");
+  hHarm_N->Draw("hist e4");
   hHarm_N->GetXaxis()->SetTitle("Num Hits");
 
   cVirt3->cd(3);
   hHarm_pdg->SetLineColor(4);
-  hHarm_pdg->Draw("hist c");
+  hHarm_pdg->Draw("hist e4");
   hHarm_pdg->GetXaxis()->SetTitle("PDG code");
 
   cVirt3->cd(4)->SetLogy(1);
   hHarm_E->SetLineColor(4);
-  hHarm_E->Draw("hist c");
+  hHarm_E->Draw("hist e4");
   hHarm_E->GetXaxis()->SetTitle("Kinetic Energy [MeV]");
 
   cVirt3->cd(5);
@@ -542,11 +538,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cVirt3->cd(6);
   hHarm_z->SetLineColor(4);
-  hHarm_z->Draw("hist c");
+  hHarm_z->Draw("hist e4");
   hHarm_z->GetXaxis()->SetTitle("z [cm]");
 
   cVirt3->Print(Form("tempd-%d.pdf", run_no));  
-  cVirt3->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -578,17 +573,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cReal1->cd(2);
   hRealEarm_N->SetLineColor(4);
-  hRealEarm_N->Draw("hist c");
+  hRealEarm_N->Draw("hist e4");
   hRealEarm_N->GetXaxis()->SetTitle("Num Hits");
 
   cReal1->cd(3);
   hRealEarm_t->SetLineColor(4);
-  hRealEarm_t->Draw("hist c");
+  hRealEarm_t->Draw("hist e4");
   hRealEarm_t->GetXaxis()->SetTitle("Time [ns]");
 
   cReal1->cd(4)->SetLogy(1);
   hRealEarm_E->SetLineColor(4);
-  hRealEarm_E->Draw("hist c");
+  hRealEarm_E->Draw("hist e4");
   hRealEarm_E->GetXaxis()->SetTitle("Energy Deposit [MeV]");
 
   cReal1->cd(5);
@@ -598,11 +593,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cReal1->cd(6);
   hRealEarm_z->SetLineColor(4);
-  hRealEarm_z->Draw("hist c");
+  hRealEarm_z->Draw("hist e4");
   hRealEarm_z->GetXaxis()->SetTitle("z [cm]");
 
   cReal1->Print(Form("tempe-%d.pdf", run_no));  
-  cReal1->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -634,17 +628,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cReal2->cd(2);
   hRealHodo_N->SetLineColor(4);
-  hRealHodo_N->Draw("hist c");
+  hRealHodo_N->Draw("hist e4");
   hRealHodo_N->GetXaxis()->SetTitle("Num Hits");
 
   cReal2->cd(3);
   hRealHodo_t->SetLineColor(4);
-  hRealHodo_t->Draw("hist c");
+  hRealHodo_t->Draw("hist e4");
   hRealHodo_t->GetXaxis()->SetTitle("Time [ns]");
 
   cReal2->cd(4)->SetLogy(1);
   hRealHodo_E->SetLineColor(4);
-  hRealHodo_E->Draw("hist c");
+  hRealHodo_E->Draw("hist e4");
   hRealHodo_E->GetXaxis()->SetTitle("Energy Deposit [MeV]");
 
   cReal2->cd(5);
@@ -654,11 +648,10 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cReal2->cd(6);
   hRealHodo_z->SetLineColor(4);
-  hRealHodo_z->Draw("hist c");
+  hRealHodo_z->Draw("hist e4");
   hRealHodo_z->GetXaxis()->SetTitle("z [cm]");
 
   cReal2->Print(Form("tempf-%d.pdf", run_no));  
-  cReal2->Close();
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -690,17 +683,17 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
     
   cReal3->cd(2);
   hRealHarm_N->SetLineColor(4);
-  hRealHarm_N->Draw("hist c");
+  hRealHarm_N->Draw("hist e4");
   hRealHarm_N->GetXaxis()->SetTitle("Num Hits");
 
   cReal3->cd(3);
   hRealHarm_t->SetLineColor(4);
-  hRealHarm_t->Draw("hist c");
+  hRealHarm_t->Draw("hist e4");
   hRealHarm_t->GetXaxis()->SetTitle("Time [ns]");
 
   cReal3->cd(4)->SetLogy(1);
   hRealHarm_E->SetLineColor(4);
-  hRealHarm_E->Draw("hist c");
+  hRealHarm_E->Draw("hist e4");
   hRealHarm_E->GetXaxis()->SetTitle("Energy Deposit [MeV]");
 
   cReal3->cd(5);
@@ -710,19 +703,18 @@ void Analyse_sFFG4MC( Int_t run_no = 14 ) {
 
   cReal3->cd(6);
   hRealHarm_z->SetLineColor(4);
-  hRealHarm_z->Draw("hist c");
+  hRealHarm_z->Draw("hist e4");
   hRealHarm_z->GetXaxis()->SetTitle("z [cm]");
 
   cReal3->Print(Form("tempg-%d.pdf", run_no));  
-  cReal3->Close();
   
   //-----------------------------------------------------------------------------------------------------------------------------
   
   gSystem->Exec(Form("pdfunite  temp*.pdf sFFG4MC_%d.pdf", run_no) );  
   gSystem->Exec("rm temp*.pdf");  
   
-  outfile->Write();
-  outfile->Close();
+//   outfile->Write();
+//   outfile->Close();
    
 }
 

@@ -20,7 +20,6 @@ using namespace std;
 // ----------------------------------------------------------------------------
 
 void    InitOutput( TString );
-Int_t   SelectReaction();
 Float_t GenerateReaction();
 Int_t   DecayReaction();
 
@@ -29,10 +28,12 @@ Int_t   DecayReaction();
 TRandom3*       fRand;
 TDatabasePDG*   fDBpdg;
 
+const Int_t     fMaxparticles = 10;
+TVector3*       fVertex[fMaxparticles];
+TLorentzVector* fP4Lab[fMaxparticles];
+
 TFile*          fROOTFile;
 TTree*          fROOTTree;
-
-const Int_t     fMaxparticles = 10;
 Int_t           fNparticles;  
 Float_t         fWeight;
 Int_t           fReactFlag;  
@@ -45,22 +46,21 @@ Float_t         fPz[fMaxparticles];
 Float_t         fE[fMaxparticles];
 Int_t           fPDG[fMaxparticles];
 
-TVector3*       fVertex[fMaxparticles];
-TLorentzVector* fP4Lab[fMaxparticles];
+enum { kDIS, kEP, kQFEN, kNReact }; 
 
 // ----------------------------------------------------------------------------
 
 void Evgen( TString outrootfile = "testgen.root", ULong64_t nev = 1000 ) 
 {
-
+  
   fRand = new TRandom3(-1);
 
   InitOutput( outrootfile );
 
   for( int i=0 ; i < fMaxparticles ; i++ ) {
-    fVertex[i] = new TVector3( 0., 0., 0. );
-    fP4Lab[i]  = new TLorentzVector( 0., 0., 0., 1. );
-    fPDG[i]    = -9999999;
+    fVertex[i] = new TVector3( 0., 0., -30. );
+    fP4Lab[i]  = new TLorentzVector( 0., 0., 6600, TMath::Sqrt(6600*6600 + 0.511*0.511) );
+    fPDG[i]    = 11;
   }
 
   fDBpdg = new TDatabasePDG();
@@ -77,7 +77,7 @@ void Evgen( TString outrootfile = "testgen.root", ULong64_t nev = 1000 )
      fflush(stdout);
     }
 
-    fReactFlag  = SelectReaction();
+    fReactFlag  = fRand->Integer( kNReact ) + 1;
     fWeight     = GenerateReaction();
     fNparticles = DecayReaction();
 
@@ -107,6 +107,7 @@ void Evgen( TString outrootfile = "testgen.root", ULong64_t nev = 1000 )
 
 void InitOutput( TString outname )
 {
+
   fROOTFile = new TFile(outname,"RECREATE");
   fROOTTree = new TTree("TGen", "Generator tree");
   fROOTTree->SetAutoSave();
@@ -127,16 +128,9 @@ void InitOutput( TString outname )
 
 // ----------------------------------------------------------------------------
 
-Int_t SelectReaction()
-{
-  return 0;
-}
-  
-// ----------------------------------------------------------------------------
-
 Float_t GenerateReaction( )
 {
-  return 0.0;
+  return 1.0;
 }
 
 // ----------------------------------------------------------------------------

@@ -67,16 +67,16 @@ private:
   TTree*                     fGenTree;  
   Int_t                      fNGenBranches;   
 
-  G4double                   fWin;
-  G4int                      fPDG[fMaxprim];
+  Float_t                   fWin;
+  Int_t                     fPDG[fMaxprim];
   
-  G4double                   fVx[fMaxprim];
-  G4double                   fVy[fMaxprim];
-  G4double                   fVz[fMaxprim];
-  G4double                   fPx[fMaxprim];
-  G4double                   fPy[fMaxprim];
-  G4double                   fPz[fMaxprim];
-  G4double                   fE[fMaxprim];
+  Float_t                   fVx[fMaxprim];
+  Float_t                   fVy[fMaxprim];
+  Float_t                   fVz[fMaxprim];
+  Float_t                   fPx[fMaxprim];
+  Float_t                   fPy[fMaxprim];
+  Float_t                   fPz[fMaxprim];
+  Float_t                   fE[fMaxprim];
 
 };
 #endif

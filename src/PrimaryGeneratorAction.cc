@@ -19,7 +19,7 @@ using namespace CLHEP;
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 {
   fMode               = EPGA_BEAM;
-  fNevents            = 0;
+  fNevents            = -1;
   fEvent              = 0;
   fWeight             = 0;
   fFlag               = 0;
@@ -28,10 +28,12 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   fGenTree            = NULL;
   fNGenBranches       = 0;
 
-  fGunMessenger      = new PrimaryGeneratorMessenger(this);
   fParticleSource    = new G4GeneralParticleSource();
   fParticleGun       = new G4ParticleGun(1);
   fParticleTable     = G4ParticleTable::GetParticleTable();
+
+  fGunMessenger      = new PrimaryGeneratorMessenger(this);
+
 }
 
 //---------------------------------------------------------------------------
@@ -77,19 +79,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     
     if(fGenTree) {
 
-      if( fNevents > fGenTree->GetEntries() )
-	fNevents = fGenTree->GetEntries();
-      
       fGenTree->GetEvent(fEvent++);
 	  
       for( Int_t j = 0; j < fNPrimParticles; j++ ) {
-	
+
 	fPDefinition[j] = fParticleTable->FindParticle( fPDG[j] );
 	
-	fParticleGun->SetParticlePosition          ( G4ThreeVector( fVx[j] *cm, fVy[j] *cm, fVz[j] *cm) );
+	fParticleGun->SetParticlePosition          ( G4ThreeVector( fVx[j], fVy[j] , fVz[j]) );
 	fParticleGun->SetParticleDefinition        ( fPDefinition[j] );
 	fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(fPx[j], fPy[j], fPz[j]).unit() );
-	fParticleGun->SetParticleEnergy            ( fE[j] *MeV );
+	fParticleGun->SetParticleEnergy            ( fE[j] * MeV);
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 	
 	fVx[j]          = fParticleGun->GetParticlePosition().getX();
@@ -149,6 +148,11 @@ void PrimaryGeneratorAction::SetUpROOTInput(TString filename)
       if( bname == "pdg"    ) branch->SetAddress( fPDG );
     }
   }
+
+  G4int nev = fGenTree->GetEntries();
+  if( fNevents == -1 || fNevents > nev )
+    fNevents = nev;
+  
 }
 
 //---------------------------------------------------------------------------

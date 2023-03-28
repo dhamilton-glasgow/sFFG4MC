@@ -1103,7 +1103,7 @@ void DetectorConstruction::BuildTarget()
   
   G4Material* VacuumMaterial                = fNistManager->FindOrBuildMaterial("G4_Galactic");
   G4Material* TargetMaterial                = fNistManager->FindOrBuildMaterial("G4_lH2");
-  G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Al");
+  G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Galactic");
   
   const G4double     inch = 2.54*cm;
 
@@ -1149,6 +1149,8 @@ void DetectorConstruction::BuildTarget()
   G4LogicalVolume* LogicInnerChamber = new G4LogicalVolume(vacUnion, VacuumMaterial, "ChamberInner_log");
   
   new G4PVPlacement(xChambRot, G4ThreeVector(), LogicInnerChamber, "ChamberInner_pos", fexpHall_log, false, 0 );
+
+  LogicInnerChamber->SetVisAttributes(G4VisAttributes::Invisible);
 
   //---------------------------------------------------------------------------
   
