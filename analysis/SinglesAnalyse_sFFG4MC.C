@@ -21,9 +21,9 @@ using namespace std;
 const Bool_t ApplyThresh     = true;
 const Bool_t ApplyWindow     = true;
 
-const Float_t Earm_threshold = 60.;
+const Float_t Earm_threshold = 28.;
 const Float_t Earm_window    = 50;
-const Float_t Harm_threshold = 10.;
+const Float_t Harm_threshold = 3.0;
 const Float_t Harm_window    = 50;
 const Float_t Hodo_threshold = 0.;
 const Float_t Hodo_window    = 50;
@@ -174,7 +174,7 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
     hRealEarm_Edet[i] = new TH1F( Form("hRealEarm_Edet%d", i), "", 100,0.,1000.);
 
   TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", NHarm,0.,NHarm);
-  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,200.);
+  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,100.);
   TH1F* hRealHarm_z   = new TH1F("hRealHarm_z",  "", 100,0.,500.);
   TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,50.);
   TH2F* hRealHarm_xy  = new TH2F("hRealHarm_xy", "", 100,-500.,500., 100,-500.,500. );
@@ -194,6 +194,7 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
   
   //-----------------------------------------------------------------------------------------------------------------------------
 
+  //  for(Long64_t ev=0; ev<10;ev++) {
   for(Long64_t ev=0; ev<nentries;ev++) {
     
     TOut->GetEntry(ev);
@@ -336,8 +337,9 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
 
   for(Int_t i=0; i<NEarm; i++) {
     det[i]     = i;
-    sumedep[i] = (hRealEarm_Edet[i]->Integral(0,100))* 16e-13;
-    sumdose[i] = (hRealEarm_Edet[i]->Integral(0,100) * 16e-13 * 60 * 60 * 100 )/(0.662);
+    sumedep[i] = (hRealEarm_Edet[i]->Integral(0,100))* 16e-13; // convert MeV to J
+    sumdose[i] = (sumedep[i] * 60 * 60 * 100 )/(0.5*2*2*20*8/1000.); // divide by detector mass in kg then convert J/s to rad/hr
+    // NB the 0.5 in the denominator accounts for the dose being deposited in the front half of the detector
     edet[i]     = 0.;
     esumedep[i] = 0.;
     
@@ -427,6 +429,7 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
   tex->Draw();
   
   cReal1->Print(Form("SinglesEarm-%2.2f.pdf", Earm_threshold));  
+  cReal1->Print(Form("SinglesEarm-%2.2f.png", Earm_threshold));  
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -498,8 +501,9 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
 
   for(Int_t i=0; i<NHarm; i++) {
     det[i]     = i;
-    sumedep[i] = (hRealHarm_Edet[i]->Integral(0,100))* 16e-13 ;
-    sumdose[i] = (hRealHarm_Edet[i]->Integral(0,100) * 16e-13 * 60 * 60 * 100 )/(100.);
+    sumedep[i] = (hRealHarm_Edet[i]->Integral(0,100))* 16e-13; // convert MeV to J
+    sumdose[i] = (sumedep[i] * 60 * 60 * 100 )/(0.2*15*15*100*4/1000.); // divide by detector mass in kg then convert J/s to rad/hr
+    // NB the 0.2 in the denominator accounts for the dose being deposited in the front 20% of the detector
     edet[i]     = 0.;
     esumedep[i] = 0.;
     
@@ -589,6 +593,7 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
   tex->Draw();
   
   cReal2->Print(Form("SinglesHarm-%2.2f.pdf", Harm_threshold));  
+  cReal2->Print(Form("SinglesHarm-%2.2f.png", Harm_threshold));  
 
   //-----------------------------------------------------------------------------------------------------------------------------
 
@@ -659,8 +664,8 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
 
   for(Int_t i=0; i<NHodo; i++) {
     det[i]     = i;
-    sumedep[i] = (hRealHodo_Edet[i]->Integral(0,100))* 16e-13;
-    sumdose[i] = (hRealHodo_Edet[i]->Integral(0,100) * 16e-13 * 60 * 60 * 100 )/(0.1);
+    sumedep[i] = (hRealHodo_Edet[i]->Integral(0,100))* 16e-13; // convert MeV to J
+    sumdose[i] = (sumedep[i] * 60 * 60 * 100 )/(3*3*10*1/1000.); // divide by detector mass in kg then convert J/s to rad/hr
     edet[i]     = 0.;
     esumedep[i] = 0.;
     
@@ -750,8 +755,11 @@ void SinglesAnalyse_sFFG4MC( Int_t run_no = 1 ) {
   tex->Draw();
   
   cReal3->Print(Form("SinglesHodo-%2.2f.pdf", Hodo_threshold));  
+  cReal3->Print(Form("SinglesHodo-%2.2f.png", Hodo_threshold));  
    
+
   }
+
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
