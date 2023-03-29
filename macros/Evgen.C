@@ -49,8 +49,8 @@ enum { kEP, kNReact };
 Float_t fRasterSize = 0.2;   // cm
 Float_t fTarLength  = 10.;   // cm
 Float_t fBeamE      = 6.6;   // GeV
-Float_t fThetaMin   = 15.0 * TMath::DegToRad(); 
-Float_t fThetaMax   = 16.0 * TMath::DegToRad(); 
+Float_t fThetaMin   = 13.5 * TMath::DegToRad(); 
+Float_t fThetaMax   = 17.5 * TMath::DegToRad(); 
 Int_t   fNgen       = 10000;
 
 // ----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ void GenerateReaction()
   Float_t yv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
   Float_t zv = fRand->Uniform( -fTarLength/2, fTarLength/2 );
 
-  Float_t L = (0.0708*6.022e23)*fTarLength*(1e-6/1.602e-19);
+  Float_t L = (0.0708*6.022e23)*fTarLength*(60.e-6/1.602e-19);
 
   // Elastic ep scattering from LH2 target
   if( fReactFlag == kEP ) {
