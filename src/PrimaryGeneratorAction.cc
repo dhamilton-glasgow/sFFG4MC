@@ -80,15 +80,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if(fGenTree) {
 
       fGenTree->GetEvent(fEvent++);
-	  
+
       for( Int_t j = 0; j < fNPrimParticles; j++ ) {
 
 	fPDefinition[j] = fParticleTable->FindParticle( fPDG[j] );
 	
-	fParticleGun->SetParticlePosition          ( G4ThreeVector( fVx[j], fVy[j] , fVz[j]) );
+	fParticleGun->SetParticlePosition          ( G4ThreeVector( fVx[j]*cm, fVy[j]*cm , fVz[j]*cm) );
 	fParticleGun->SetParticleDefinition        ( fPDefinition[j] );
 	fParticleGun->SetParticleMomentumDirection ( G4ThreeVector(fPx[j], fPy[j], fPz[j]).unit() );
-	fParticleGun->SetParticleEnergy            ( fE[j] * MeV);
+	fParticleGun->SetParticleEnergy            ( fE[j] );
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 	
 	fVx[j]          = fParticleGun->GetParticlePosition().getX();
@@ -134,7 +134,7 @@ void PrimaryGeneratorAction::SetUpROOTInput(TString filename)
     TString  bname  = TString( const_cast<char*> (branch->GetName()) );
 
     if( bname == "Nparticles" ) branch->SetAddress( &fNPrimParticles );
-    if( bname == "weight" )     branch->SetAddress( &fWin  );
+    if( bname == "weight" )     branch->SetAddress( &fWeight  );
     if( bname == "flag" )       branch->SetAddress( &fFlag );
 
     if( fNPrimParticles < fMaxprim ) {

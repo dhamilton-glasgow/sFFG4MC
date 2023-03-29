@@ -17,7 +17,7 @@
 # Set output options
 ##################################################################
 
-/sFFG4MC/output/setOutputFile vis_root.root
+/sFFG4MC/output/setOutputFile batch_root.root
 
 ##################################################################
 # Set generator options

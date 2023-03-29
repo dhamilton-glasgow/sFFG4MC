@@ -37,7 +37,7 @@ public:
   G4int         GetMode()                       { return fMode; }
   G4int         GetNEvents()                    { return fNevents; }
 
-  G4double      GetWeight()                     { return fWeight; }
+  G4double      GetWeight()                     { return (G4double)fWeight; }
   G4int         GetFlag()                       { return fFlag; }
   G4int         GetNPrimaryParticles()          { return fNPrimParticles; }
   G4ThreeVector GetVertex( G4int i )            { return G4ThreeVector(fVx[i],  fVy[i],  fVz[i]);  }
@@ -53,9 +53,6 @@ private:
   G4ParticleTable*           fParticleTable;
 
   G4int                      fMode;   
-  G4int                      fNPrimParticles;   
-  G4double                   fWeight;
-  G4int                      fFlag;
   G4int                      fNevents;
   G4int                      fEvent;
   
@@ -67,7 +64,10 @@ private:
   TTree*                     fGenTree;  
   Int_t                      fNGenBranches;   
 
-  Float_t                   fWin;
+  Int_t                     fNPrimParticles;   
+  Float_t                   fWeight;
+  Int_t                     fFlag;
+
   Int_t                     fPDG[fMaxprim];
   
   Float_t                   fVx[fMaxprim];
@@ -78,6 +78,7 @@ private:
   Float_t                   fPz[fMaxprim];
   Float_t                   fE[fMaxprim];
 
+  
 };
 #endif
 
