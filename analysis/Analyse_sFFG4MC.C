@@ -34,7 +34,8 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
 
   TChain* TOut = new TChain("TOut");
   
-  TOut->Add(Form("out/batch_%d*_beam.root", run_no));
+  TOut->Add(Form("batch_root.root", run_no));
+  //  TOut->Add(Form("out/batch_%d*_beam.root", run_no));
 
   const Int_t     Maxprim = 50;
   const Int_t     Maxhits = 10000;
@@ -172,30 +173,30 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
 
   TH1F* hPrim_N   = new TH1F("hPrim_N",  "", 100,0.,10.);
   TH1F* hPrim_E   = new TH1F("hPrim_E",  "", 100,0.,10000.);
-  TH1F* hPrim_z   = new TH1F("hPrim_z",  "", 100,-40.,0.);
-  TH1F* hPrim_pdg = new TH1F("hPrim_pdg",  "", 100,-30.,30.);
+  TH1F* hPrim_z   = new TH1F("hPrim_z",  "", 100,-40.,40.);
+  TH1F* hPrim_pdg = new TH1F("hPrim_pdg",  "", 100,-300.,3000.);
   TH2F* hPrim_xy  = new TH2F("hPrim_xy", "", 100,-1.0,1.0, 100,-1.,1. );
 
   TH1F* hEarm_N   = new TH1F("hEarm_N",  "", 100,0.,960.);
-  TH1F* hEarm_E   = new TH1F("hEarm_E",  "", 100,0.,500.);
+  TH1F* hEarm_E   = new TH1F("hEarm_E",  "", 100,0.,6000.);
   TH1F* hEarm_z   = new TH1F("hEarm_z",  "", 100,0.,500.);
-  TH1F* hEarm_pdg = new TH1F("hEarm_pdg",  "", 100,-30.,30.);
+  TH1F* hEarm_pdg = new TH1F("hEarm_pdg",  "", 100,-300.,3000.);
   TH2F* hEarm_xy  = new TH2F("hEarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hHodo_N   = new TH1F("hHodo_N",  "", 100,0.,7200.);
-  TH1F* hHodo_E   = new TH1F("hHodo_E",  "", 100,0.,500.);
+  TH1F* hHodo_E   = new TH1F("hHodo_E",  "", 100,0.,2500.);
   TH1F* hHodo_z   = new TH1F("hHodo_z",  "", 100,0.,500.);
-  TH1F* hHodo_pdg = new TH1F("hHodo_pdg",  "", 100,-30.,30.);
+  TH1F* hHodo_pdg = new TH1F("hHodo_pdg",  "", 100,-300.,3000.);
   TH2F* hHodo_xy  = new TH2F("hHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hHarm_N   = new TH1F("hHarm_N",  "", 100,0.,288.);
-  TH1F* hHarm_E   = new TH1F("hHarm_E",  "", 100,0.,500.);
+  TH1F* hHarm_E   = new TH1F("hHarm_E",  "", 100,0.,2500.);
   TH1F* hHarm_z   = new TH1F("hHarm_z",  "", 100,0.,500.);
-  TH1F* hHarm_pdg = new TH1F("hHarm_pdg",  "", 100,-30.,30.);
+  TH1F* hHarm_pdg = new TH1F("hHarm_pdg",  "", 100,-300.,3000.);
   TH2F* hHarm_xy  = new TH2F("hHarm_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hRealEarm_N   = new TH1F("hRealEarm_N",  "", 960,0.,960.);
-  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,300.);
+  TH1F* hRealEarm_E   = new TH1F("hRealEarm_E",  "", 100,0.,5000.);
   TH1F* hRealEarm_z   = new TH1F("hRealEarm_z",  "", 100,0.,800.);
   TH1F* hRealEarm_t   = new TH1F("hRealEarm_t",  "", 100, 0.,50.);
   TH2F* hRealEarm_xy  = new TH2F("hRealEarm_xy", "", 100,-500.,500., 100,-500.,500. );
@@ -207,7 +208,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   TH2F* hRealHodo_xy  = new TH2F("hRealHodo_xy", "", 100,-500.,500., 100,-500.,500. );
 
   TH1F* hRealHarm_N   = new TH1F("hRealHarm_N",  "", 288,0.,288.);
-  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,200.);
+  TH1F* hRealHarm_E   = new TH1F("hRealHarm_E",  "", 100,0.,250.);
   TH1F* hRealHarm_z   = new TH1F("hRealHarm_z",  "", 100,0.,500.);
   TH1F* hRealHarm_t   = new TH1F("hRealHarm_t",  "", 100, 0.,50.);
   TH2F* hRealHarm_xy  = new TH2F("hRealHarm_xy", "", 100,-500.,500., 100,-500.,500. );
@@ -356,7 +357,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   hPrim_N->Draw("hist e4");
   hPrim_N->GetXaxis()->SetTitle("Num Primary Particles");
 
-  cPrim->cd(3);
+  cPrim->cd(3)->SetLogy(1);
   hPrim_pdg->SetLineColor(4);
   hPrim_pdg->Draw("hist e4");
   hPrim_pdg->GetXaxis()->SetTitle("PDG code");
@@ -411,7 +412,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   hEarm_N->Draw("hist e4");
   hEarm_N->GetXaxis()->SetTitle("Num Hits");
 
-  cVirt1->cd(3);
+  cVirt1->cd(3)->SetLogy(1);
   hEarm_pdg->SetLineColor(4);
   hEarm_pdg->Draw("hist e4");
   hEarm_pdg->GetXaxis()->SetTitle("PDG code");
@@ -466,7 +467,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   hHodo_N->Draw("hist e4");
   hHodo_N->GetXaxis()->SetTitle("Num Hits");
 
-  cVirt2->cd(3);
+  cVirt2->cd(3)->SetLogy(1);
   hHodo_pdg->SetLineColor(4);
   hHodo_pdg->Draw("hist e4");
   hHodo_pdg->GetXaxis()->SetTitle("PDG code");
@@ -521,7 +522,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   hHarm_N->Draw("hist e4");
   hHarm_N->GetXaxis()->SetTitle("Num Hits");
 
-  cVirt3->cd(3);
+  cVirt3->cd(3)->SetLogy(1);
   hHarm_pdg->SetLineColor(4);
   hHarm_pdg->Draw("hist e4");
   hHarm_pdg->GetXaxis()->SetTitle("PDG code");

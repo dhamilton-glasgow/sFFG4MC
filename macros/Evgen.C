@@ -51,10 +51,11 @@ Float_t fTarLength  = 10.;   // cm
 Float_t fBeamE      = 6.6;   // GeV
 Float_t fThetaMin   = 15.0 * TMath::DegToRad(); 
 Float_t fThetaMax   = 16.0 * TMath::DegToRad(); 
+Int_t   fNgen       = 10000;
 
 // ----------------------------------------------------------------------------
 
-void Evgen( TString outrootfile = "testgen.root", ULong64_t nev = 1000 ) 
+void Evgen( TString outrootfile = "testgen.root" ) 
 {
   
   fRand = new TRandom3(-1);
@@ -74,10 +75,10 @@ void Evgen( TString outrootfile = "testgen.root", ULong64_t nev = 1000 )
   
   // ----------------------------------------------------------------------------
 
-  for( ULong64_t i = 0; i < nev; i++ ) {
+  for( Int_t i = 0; i < fNgen; i++ ) {
 
-    if( nev%1000 == 0 ) {
-     printf("Event %8lld\r", nev);
+    if( i%1000 == 0 ) {
+     printf("Event %8d\r", i);
      fflush(stdout);
     }
 
@@ -197,7 +198,7 @@ void GenerateReaction()
     Float_t dsigRosen = dsigMott*(scatP4.E()/beamP4.E()) * 
       ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
 
-    fWeight = (1./1.) * L * dOmega * dsigRosen*1e-9*1e-24;
+    fWeight = (1./fNgen) * L * dOmega * dsigRosen*1e-9*1e-24;
   }
 
   // default
