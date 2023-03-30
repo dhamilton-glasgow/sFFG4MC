@@ -34,7 +34,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
 
   TChain* TOut = new TChain("TOut");
   
-  TOut->Add(Form("batch_root.root", run_no));
+  TOut->Add(Form("out/batch_root.root", run_no));
   //  TOut->Add(Form("out/batch_%d*_beam.root", run_no));
 
   const Int_t     Maxprim = 50;
@@ -222,7 +222,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
     if( ev%10000 == 0 )
       cout << ev << endl;
 
-    Event_weight = Event_weight * 1/ntrees;   // this only works if nevents is the same for all trees in the chain
+    Event_weight = 1000.*Event_weight * 1/ntrees;   // this only works if nevents is the same for all trees in the chain
 
     if (Event_weight == 0 ) 
       Event_weight = 1;
@@ -345,7 +345,7 @@ void Analyse_sFFG4MC( Int_t run_no = 1 ) {
   tex->SetTextSize(0.095);
   tex->Draw();
 
-  tex = new TLatex( 0.14, 0.1, Form("Weight = %2.1f", Event_weight ));
+  tex = new TLatex( 0.14, 0.1, Form("Weight = %3.2e", Event_weight ));
   tex->SetNDC(1);
   tex->SetTextFont(42);
   tex->SetTextColor(1);
