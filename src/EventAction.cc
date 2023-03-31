@@ -119,7 +119,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
     // Only fill output root tree if there are hits in the event
     if( nvirtualhits != 0 || nrealhits != 0 ) {
 
-      fOutManager->FillTree( (G4double)fPGA->GetWeight(), (G4int)fPGA->GetFlag() ); 
+      fOutManager->FillTree( (G4double)fPGA->GetWeight(), (G4int)fPGA->GetFlag(), (G4int)fPGA->GetNEvents() ); 
     }
   }
 

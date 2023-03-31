@@ -29,7 +29,7 @@ public:
   void FillPrimaryArray( Int_t );
   void FillVirtualArray( Int_t );
   void FillRealArray( Int_t );
-  void FillTree( G4double, G4int );
+  void FillTree( G4double, G4int, G4int );
 
   void SetOutFileName( TString fname ) { fOutFileName  = fname; }
 
@@ -61,10 +61,18 @@ private:
   TString               fOutFileName;
   TFile*                fROOTfile;
   TTree*                fROOTtree;
-  
+
+  const G4int           fNearm    = 960;
+  const G4int           fNearmCol = 32;
+  const G4int           fNhodo    = 7200;
+  const G4int           fNhodoCol = 80;
+  const G4int           fNharm    = 288;
+  const G4int           fNharmCol  = 16;
+
   // Event
   Float_t               fEvent_weight;
   Int_t                 fEvent_flag;
+  Int_t                 fEvent_num;
   
   // Primary
   static const Int_t    fMaxprim = 50;
