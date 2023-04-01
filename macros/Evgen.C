@@ -9,19 +9,21 @@
 #include "TPDGCode.h"
 
 #include "cteq/cteqpdf.h"
+#include "Inelastic.h"
 
 #include <iostream>
 using namespace std;
 
 // ----------------------------------------------------------------------------
 
+void   InitOutput( TString );
+void   GenerateReaction();
+
+// ----------------------------------------------------------------------------
+
 cteq_pdf_t *__dis_pdf;
-
-void initcteqpdf();
+void   initcteqpdf();
 double dissigma( double, double, double );
-
-void InitOutput( TString );
-void GenerateReaction();
 
 // ----------------------------------------------------------------------------
 
@@ -34,33 +36,34 @@ TDatabasePDG* fDBpdg;
 TFile*        fROOTFile;
 TTree*        fROOTTree;
 Int_t         fNparticles;  
-Float_t       fWeight;
+Double_t      fWeight;
 Int_t         fReactFlag;  
-Float_t       fVx[fMaxparticles];
-Float_t       fVy[fMaxparticles];
-Float_t       fVz[fMaxparticles];
-Float_t       fPx[fMaxparticles];
-Float_t       fPy[fMaxparticles];
-Float_t       fPz[fMaxparticles];
-Float_t       fE[fMaxparticles];
+Double_t      fVx[fMaxparticles];
+Double_t      fVy[fMaxparticles];
+Double_t      fVz[fMaxparticles];
+Double_t      fPx[fMaxparticles];
+Double_t      fPy[fMaxparticles];
+Double_t      fPz[fMaxparticles];
+Double_t      fE[fMaxparticles];
 Int_t         fPDG[fMaxparticles];
 
-enum { kEP, kDIS, kNReact }; 
+enum { kElastic, kDIS, kQE, kInelastic, kPiPhoto, kNReact }; 
+//enum { kElastic, kDIS, kNReact }; 
 
-Float_t fRasterSize = 0.2;   // cm
-Float_t fTarLength  = 10.;   // cm
-Float_t fBeamE      = 6.6;   // GeV
-Float_t fThetaMin   = 15.4 * TMath::DegToRad(); 
-Float_t fThetaMax   = 15.6 * TMath::DegToRad(); 
-Float_t fEMin       = 0.2;
-Float_t fEMax       = 5.2;
-Int_t   fNgen       = 10000;
+Double_t fRasterSize  = 0.2;   // cm
+Double_t fTarLength   = 10.;   // cm
+Double_t fWindowThick = 0.1;   // cm
+Double_t fBeamE       = 6.6;   // GeV
+Double_t fThetaMin    = 10.5 * TMath::DegToRad(); 
+Double_t fThetaMax    = 50.5 * TMath::DegToRad(); 
 
 // ----------------------------------------------------------------------------
 
-void Evgen( TString outrootfile = "testgen.root" ) 
+void Evgen( Int_t run_no = 9999, Int_t ngen = 1000 )
 {
 
+  TString outrootfile = Form("out/gen_%d.root", run_no );
+ 
   initcteqpdf();
 
   fRand = new TRandom3(0);
@@ -80,7 +83,7 @@ void Evgen( TString outrootfile = "testgen.root" )
   
   // ----------------------------------------------------------------------------
 
-  for( Int_t i = 0; i < fNgen; i++ ) {
+  for( Int_t i = 0; i < ngen; i++ ) {
 
     if( i%1000 == 0 ) {
      printf("Event %8d\r", i);
@@ -94,14 +97,14 @@ void Evgen( TString outrootfile = "testgen.root" )
     
     for( int i=0 ; i < fNparticles ; i++ ) {
       
-      fVx[i]  = (Float_t)fVertex[i]->X();
-      fVy[i]  = (Float_t)fVertex[i]->Y();
-      fVz[i]  = (Float_t)fVertex[i]->Z();
+      fVx[i]  = (Double_t)fVertex[i]->X();
+      fVy[i]  = (Double_t)fVertex[i]->Y();
+      fVz[i]  = (Double_t)fVertex[i]->Z();
 
-      fPx[i]  = 1000*(Float_t)fP4Lab[i]->Px();
-      fPy[i]  = 1000*(Float_t)fP4Lab[i]->Py();
-      fPz[i]  = 1000*(Float_t)fP4Lab[i]->Pz();
-      fE[i]   = 1000*(Float_t)fP4Lab[i]->E();
+      fPx[i]  = 1000*(Double_t)fP4Lab[i]->Px();
+      fPy[i]  = 1000*(Double_t)fP4Lab[i]->Py();
+      fPz[i]  = 1000*(Double_t)fP4Lab[i]->Pz();
+      fE[i]   = 1000*(Double_t)fP4Lab[i]->E();
     }
     
     fROOTTree->Fill();
@@ -123,17 +126,17 @@ void InitOutput( TString outname )
   fROOTTree = new TTree("TGen", "Generator tree");
   fROOTTree->SetAutoSave();
 
-  fROOTTree->Branch("weight",     &fWeight,     "weight/F");
+  fROOTTree->Branch("weight",     &fWeight,     "weight/D");
   fROOTTree->Branch("flag",       &fReactFlag,  "flag/I");
   fROOTTree->Branch("Nparticles", &fNparticles, "Nparticles/I");
 
-  fROOTTree->Branch("vx",  fVx,  "vx[Nparticles]/F");
-  fROOTTree->Branch("vy",  fVy,  "vy[Nparticles]/F");
-  fROOTTree->Branch("vz",  fVz,  "vz[Nparticles]/F");
-  fROOTTree->Branch("px",  fPx,  "px[Nparticles]/F");
-  fROOTTree->Branch("py",  fPy,  "py[Nparticles]/F");
-  fROOTTree->Branch("pz",  fPz,  "pz[Nparticles]/F");
-  fROOTTree->Branch("E",   fE,   "E[Nparticles]/F");
+  fROOTTree->Branch("vx",  fVx,  "vx[Nparticles]/D");
+  fROOTTree->Branch("vy",  fVy,  "vy[Nparticles]/D");
+  fROOTTree->Branch("vz",  fVz,  "vz[Nparticles]/D");
+  fROOTTree->Branch("px",  fPx,  "px[Nparticles]/D");
+  fROOTTree->Branch("py",  fPy,  "py[Nparticles]/D");
+  fROOTTree->Branch("pz",  fPz,  "pz[Nparticles]/D");
+  fROOTTree->Branch("E",   fE,   "E[Nparticles]/D");
   fROOTTree->Branch("pdg", fPDG, "pdg[Nparticles]/I");
 }
 
@@ -142,42 +145,41 @@ void InitOutput( TString outname )
 void GenerateReaction()
 {
 
-  Float_t xv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
-  Float_t yv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
-  Float_t zv = fRand->Uniform( -fTarLength/2, fTarLength/2 );
+  Double_t xv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
+  Double_t yv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
+  Double_t zv = fRand->Uniform( -fTarLength/2, fTarLength/2 );
 
-  Float_t L      = (0.0708*6.022e23)*fTarLength*(60.e-6/1.602e-19);
-  Float_t dOmega = TMath::TwoPi()*(cos(fThetaMin)-cos(fThetaMax));
+  Double_t L      = (0.0708*6.022e23)*fTarLength*(60.e-6/1.602e-19); // 60uA on LH2
+  Double_t dOmega = TMath::TwoPi()*(TMath::Cos(fThetaMin)-TMath::Cos(fThetaMax));
 
   TLorentzVector beamP4( 0., 0., fBeamE, fBeamE );
   TLorentzVector targP4( 0., 0., 0., fDBpdg->GetParticle(2212)->Mass() );
   
-  Float_t mt = fDBpdg->GetParticle(2212)->Mass(); 
-  Float_t me = fDBpdg->GetParticle(fPDG[0])->Mass(); 
-  Float_t th, ph;
+  Double_t mt = fDBpdg->GetParticle(2212)->Mass(); 
+  Double_t me = fDBpdg->GetParticle(11)->Mass(); 
+  Double_t th, ph;
 
-  TVector3 scatP3, rest;
-  Float_t scatE, scatP, Q2;
+  TVector3 scatP3;
+  Double_t scatE, scatP, Q2;
 
-  TLorentzVector scatP4, qP4, qrestP4;
+  TLorentzVector scatP4, qP4;
  
-  Float_t hbarc = 197.327/1000;
-  Float_t alpha = 1/137.036;
+  Double_t hbarc = 197.327/1000;
+  Double_t alpha = 1/137.036;
 
-  switch( fReactFlag ) {
+  // ----------------------------------------------------------------------------
+  // ep -> ep Kelly fit
+  // ----------------------------------------------------------------------------
+
+  if( fReactFlag == kElastic ) {
     
-  case kEP: { // Elastic ep scattering from LH2 target
-
     fNparticles = 2;
     fVertex[0]->SetXYZ( xv, yv, zv );
     fVertex[1]->SetXYZ( xv, yv, zv );
     fPDG[0] = 11;
     fPDG[1] = 2212;
     
-    // ----------------------------------------------------------------------------
-    // Kinematics
-    
-    Float_t mp = fDBpdg->GetParticle(fPDG[1])->Mass();
+    Double_t mp = fDBpdg->GetParticle(fPDG[1])->Mass();
     
     th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
     ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
@@ -186,107 +188,269 @@ void GenerateReaction()
     scatE = (fBeamE*targP4.E())/(fBeamE*(1 -TMath::Cos(th)) + targP4.E()-targP4.Vect().Dot(scatP3));
     scatP = TMath::Sqrt( scatE*scatE - me*me );
     scatP4.SetPxPyPzE( scatP*scatP3.X(), scatP*scatP3.Y(), scatP*scatP3.Z(), scatE ); 
-    qP4 = beamP4 - scatP4; 
-
-    rest = targP4.BoostVector();
-    beamP4.Boost( -rest );
-    targP4.Boost( -rest );
-    scatP4.Boost( -rest );
-    
-    qrestP4  = beamP4 - scatP4;
-    TLorentzVector recoilP4 = targP4 + qrestP4;
-    
-    // ----------------------------------------------------------------------------
-    // Cross section
-    
-    hbarc = 197.327/1000;
-    alpha = 1/137.036;
+    qP4   = beamP4 - scatP4; 
     Q2    = -qP4.M2();
 
-    Float_t tau   = Q2/(4*mp*mp);
-    Float_t GE    = (1.0-0.24*tau)/(1.0 + 10.98*tau + 12.82*tau*tau + 21.97*tau*tau*tau );
-    Float_t GM    = 2.79*(1.0+0.12*tau)/(1.0 + 10.97*tau + 18.86*tau*tau + 6.55*tau*tau*tau );
-    
-    Float_t dSigMott  = 1e10*hbarc*hbarc*alpha*alpha/
-      (4*beamP4.E()*beamP4.E()*TMath::Power(TMath::Sin(th/2),4))
-      *(scatP4.E()/beamP4.E())*TMath::Power(TMath::Cos(th/2),2);  
-    Float_t dSigRosen = dSigMott * 
-      ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
-
-    fWeight = (1.*kNReact/fNgen) * L * dOmega * dSigRosen*1e-36;
-
-    scatP4.Boost( rest );
-    recoilP4.Boost( rest );
+    TLorentzVector recoilP4 = targP4 + qP4;
     *fP4Lab[0] = scatP4;
     *fP4Lab[1] = recoilP4;
 
-    break;
-  }
-  case kDIS: { // DIS from LH2 target
+    Double_t tau   = Q2/(4*mp*mp);
+    Double_t GE    = (1.0-0.24*tau)/(1.0 + 10.98*tau + 12.82*tau*tau + 21.97*tau*tau*tau );
+    Double_t GM    = 2.79*(1.0+0.12*tau)/(1.0 + 10.97*tau + 18.86*tau*tau + 6.55*tau*tau*tau );
     
-    fNparticles = 1;
+    Double_t dSigMott  = 1e10*hbarc*hbarc*alpha*alpha/
+      (4*beamP4.E()*beamP4.E()*TMath::Power(TMath::Sin(th/2),4))
+      *(scatP4.E()/beamP4.E())*TMath::Power(TMath::Cos(th/2),2);  
+    Double_t dSigRosen = dSigMott * 
+      ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
+    
+    fWeight = L * dOmega * dSigRosen*1e-36;
+    //    cout << "EP " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-36 << endl;
+  }
+
+
+  // ----------------------------------------------------------------------------
+  // ep -> e(X) DIS with F2 from CTEQ6
+  // ----------------------------------------------------------------------------
+
+  else if ( fReactFlag == kDIS ) { 
+
+      fNparticles = 1;
+      fVertex[0]->SetXYZ( xv, yv, zv );
+      fPDG[0] = 11;
+
+      th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
+      ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
+      scatP3.SetXYZ( TMath::Sin(th)*TMath::Cos(ph), TMath::Sin(th)*TMath::Sin(ph), TMath::Cos(th) );
+      
+      Double_t Emin = 0.2;
+      Double_t Emax = fBeamE / (1.0 + fBeamE/mt*(1.0-TMath::Cos(th))) - 0.001;
+
+      scatE = fRand->Uniform( Emin, Emax );
+      scatP = TMath::Sqrt( scatE*scatE - me*me );
+      scatP4.SetPxPyPzE( scatP*scatP3.X(), scatP*scatP3.Y(), scatP*scatP3.Z(), scatE ); 
+
+      *fP4Lab[0] = scatP4;
+      
+      Double_t  dSigDIS = dissigma( (double)beamP4.E(), (double)th, (double)scatP4.E() ); 
+      
+      fWeight = L * dOmega * (Emax - Emin) * dSigDIS * 1e-33;
+      //      cout << "DIS " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << Emax-Emin << "\t" << dSigDIS*1e-33  << endl;
+    }
+
+  // ----------------------------------------------------------------------------
+  // eN -> eN (Quasi-elastic in the target windows, Kelly fit)
+  // ----------------------------------------------------------------------------
+
+  if( fReactFlag == kQE ) {
+    
+    if( fRand->Uniform(0,1) < 1.0/2.0 )
+      zv = fRand->Uniform( -fWindowThick - fTarLength/2, -fTarLength/2 );
+    else
+      zv = fRand->Uniform( fTarLength/2, fTarLength/2 + fWindowThick);
+
+    fNparticles = 2;
     fVertex[0]->SetXYZ( xv, yv, zv );
+    fVertex[1]->SetXYZ( xv, yv, zv );
+
+    Int_t pdg_N;
+    if( fRand->Uniform(0,1) < 1.0/2.0 )
+      pdg_N = 2212; // p
+     else 
+      pdg_N = 2112; // n
     fPDG[0] = 11;
+    fPDG[1] = pdg_N;
 
-    // ----------------------------------------------------------------------------
-    // Kinematics
-
+    Double_t mt       = fDBpdg->GetParticle(fPDG[1])->Mass(); 
+    Double_t mN       = mt;
+    Double_t pF       = fRand->Uniform( 0.0, 0.3  );
+    Double_t EF       = TMath::Sqrt(pF*pF + mt*mt );
+    Double_t costhtar = fRand->Uniform( -1., 1. );
+    Double_t thtar    = TMath::ACos( costhtar );
+    Double_t phtar    = fRand->Uniform( -TMath::Pi(), TMath::Pi() );
+   
+    TLorentzVector targP4( pF * TMath::Sin( thtar ) * TMath::Cos( phtar ),
+			   pF * TMath::Sin( thtar ) * TMath::Sin( phtar ),
+			   pF * TMath::Cos( thtar ),
+			   EF );
+    
     th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
     ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
     scatP3.SetXYZ( TMath::Sin(th)*TMath::Cos(ph), TMath::Sin(th)*TMath::Sin(ph), TMath::Cos(th) );
 
-    scatE = fRand->Uniform( fEMin, fEMax );
+    scatE = (fBeamE*targP4.E())/(fBeamE*(1 -TMath::Cos(th)) + targP4.E()-targP4.Vect().Dot(scatP3));
     scatP = TMath::Sqrt( scatE*scatE - me*me );
     scatP4.SetPxPyPzE( scatP*scatP3.X(), scatP*scatP3.Y(), scatP*scatP3.Z(), scatE ); 
- 
-    qP4 = beamP4 - scatP4; 
-    TLorentzVector XP4    = targP4 + qP4;
-    TLorentzVector ftotP4 = XP4 + scatP4;
-    TLorentzVector itotP4 = beamP4 + targP4;
+    qP4   = beamP4 - scatP4; 
+    Q2    = -qP4.M2();
 
-    rest = targP4.BoostVector();
-    beamP4.Boost( -rest );
-    targP4.Boost( -rest );
-    scatP4.Boost( -rest );
-
-    qrestP4  = beamP4 - scatP4;
-    Float_t x = -qrestP4.M2()/(2.0*targP4.Dot( qrestP4 ) );
-    
-    if( ftotP4.M2() > itotP4.M2() || ftotP4.E() > itotP4.E() || x > 1.0 || x < 0.0 ) {
-      scatP4.SetPxPyPzE( 0.0, 0.0, 0.0, 0.0 );
-    }
-    Float_t threst = TMath::ACos( beamP4.Vect().Unit().Dot(scatP4.Vect().Unit()) );
-
-    // ----------------------------------------------------------------------------
-    // Cross section
-
-    Float_t  dSigDIS = dissigma( beamP4.E(), threst, scatP4.E() ); 
-
-    fWeight = (1.*kNReact/fNgen) * L * dOmega * (fEMax - fEMin) * dSigDIS * 1e-33;
-
-    scatP4.Boost( rest );
+    TLorentzVector recoilP4 = targP4 + qP4;
     *fP4Lab[0] = scatP4;
+    *fP4Lab[1] = recoilP4;
 
-    break;
+    Double_t tau   = Q2/(4*mN*mN);
+    Double_t GE, GM, GD;
+    if( pdg_N == 2212 ) {
+      GE = (1.0-0.24*tau)/(1.0 + 10.98*tau + 12.82*tau*tau + 21.97*tau*tau*tau );
+      GM = 2.79*(1.0+0.12*tau)/(1.0 + 10.97*tau + 18.86*tau*tau + 6.55*tau*tau*tau );
+    }
+    else {
+      GD = pow(1.0 + Q2/(0.71), -2.0);
+      GE = (1.520*tau + 2.629*tau*tau + 3.055*tau*tau*tau)*GD/(1.0+5.222*tau+0.040*tau*tau+11.438*tau*tau*tau);
+      GM = -1.913*(1.0+2.33*tau)/(1.0 + 14.72*tau + 24.20*tau*tau + 84.1*tau*tau*tau );
+    }
+
+    Double_t dSigMott  = 1e10*hbarc*hbarc*alpha*alpha/
+      (4*beamP4.E()*beamP4.E()*TMath::Power(TMath::Sin(th/2),4))
+      *(scatP4.E()/beamP4.E())*TMath::Power(TMath::Cos(th/2),2);  
+    Double_t dSigRosen = dSigMott * 
+      ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
+    
+    fWeight = L * dOmega * dSigRosen*1e-36;
+    //    cout << "EP " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-36 << endl;
   }
-  default: {
-    fWeight = 1.0;
-    fNparticles = 1;
-  }
-  }
+
+  // ----------------------------------------------------------------------------
+  // ep -> eppi0 and ep -> enpi+ (Bosted and Christy, arxiv 0712.3731v4 )
+  // ----------------------------------------------------------------------------
+
+  else if ( fReactFlag == kInelastic ) { 
+
+    fNparticles = 3;
+    fVertex[0]->SetXYZ( xv, yv, zv );
+    fVertex[1]->SetXYZ( xv, yv, zv );
+    fVertex[2]->SetXYZ( xv, yv, zv );
+      
+    th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
+    ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
+    scatP3.SetXYZ( TMath::Sin(th)*TMath::Cos(ph), TMath::Sin(th)*TMath::Sin(ph), TMath::Cos(th) );
+    
+    Double_t W2min = pow(( mt + fDBpdg->GetParticle(111)->Mass() ), 2.0);
+    Double_t Emin  = 0.2; 
+    Double_t Emax  = (fBeamE / (1.0 + fBeamE/mt*(1.0-TMath::Cos(th))))-0.14;
+    
+    scatE = fRand->Uniform( Emin, Emax );
+    scatP = TMath::Sqrt( scatE*scatE - me*me );
+    scatP4.SetPxPyPzE( scatP*scatP3.X(), scatP*scatP3.Y(), scatP*scatP3.Z(), scatE ); 
+    qP4   = beamP4 - scatP4; 
+    Q2    = -qP4.M2();
+
+    TLorentzVector XP4 = targP4 + qP4;
+    Double_t       W2  = XP4.M2();
+    Double_t       W   = TMath::Sqrt( W2 );
+    Double_t       x   = -qP4.M2()/(2.0*targP4.Dot( qP4 ) );
+    
+    Int_t pdg_Nf, pdg_pi;
+    if( fRand->Uniform(0,1) < 2.0/3.0 ){
+      pdg_Nf = 2212; // p
+      pdg_pi = 111;  // pi0
+    } else {
+      pdg_Nf = 2112; // n
+      pdg_pi = 211;  // pi+
+    }
+    fPDG[1] = pdg_Nf;
+    fPDG[2] = pdg_pi; 
+
+    Double_t M_ni = fDBpdg->GetParticle(2212)->Mass(); 
+    Double_t M_nf = fDBpdg->GetParticle(pdg_Nf)->Mass(); 
+    Double_t Mpi  = fDBpdg->GetParticle(pdg_pi)->Mass(); 
+
+    Double_t thpi = TMath::ACos( fRand->Uniform(-1,1) );
+    Double_t phpi = fRand->Uniform(0, TMath::TwoPi());
+    
+    Float_t Epcm  = (W2 + Mpi*Mpi - M_nf*M_nf)/(2.0*W);   
+    Float_t ppcm  = TMath::Sqrt( (Epcm*Epcm - Mpi*Mpi) );
+    Float_t pxpcm = ppcm * TMath::Sin( thpi ) * TMath::Cos( phpi );
+    Float_t pypcm = ppcm * TMath::Sin( thpi ) * TMath::Sin( phpi );
+    Float_t pzpcm = -ppcm * TMath::Cos( thpi );
+    
+    TLorentzVector pionP4( pxpcm,pypcm,pzpcm,Epcm );
+    TLorentzVector nucleonP4( -pxpcm,-pypcm,-pzpcm, TMath::Sqrt( ppcm*ppcm + M_nf*M_nf ) );
+    
+    TVector3 boost = XP4.BoostVector();
+    pionP4.Boost( boost );
+    nucleonP4.Boost( boost );
+
+    *fP4Lab[0] = scatP4;
+    *fP4Lab[1] = nucleonP4;
+    *fP4Lab[2] = pionP4;
+
+    Double_t dSigInel = sigma_p( (double)beamP4.E(), (double)th, (double)scatP4.E() );  
+      
+    fWeight = L * dOmega * (Emax - Emin) * dSigInel * 1e-33;
+    //    cout << "Inelastic " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << Emax-Emin << "\t" << dSigInel*1e-33  << endl;
+  }    
+
+  // ----------------------------------------------------------------------------
+  // gammap -> ppi0 (fit to E99114 data)
+  // ----------------------------------------------------------------------------
+
+  else if ( fReactFlag == kPiPhoto ) { 
+
+    fNparticles = 2;
+    fVertex[0]->SetXYZ( xv, yv, zv );
+    fVertex[1]->SetXYZ( xv, yv, zv );
+    fPDG[0] = 2212;
+    fPDG[1] = 111; 
+      
+    th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
+    ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
+
+    Double_t Emin  = 6.0; 
+    Double_t Emax  = fBeamE;
+    Double_t beamE = fRand->Uniform( Emin, Emax ); // need 1/E distribution
+    beamP4.SetPxPyPzE( 0., 0., beamE, beamE ); 
+
+    TLorentzVector XP4 = targP4 + beamP4;
+    Double_t       W2  = XP4.M2();
+    Double_t       W   = TMath::Sqrt( W2 );
+
+    Double_t M_ni = fDBpdg->GetParticle(2212)->Mass(); 
+    Double_t M_nf = fDBpdg->GetParticle(fPDG[0])->Mass(); 
+    Double_t Mpi  = fDBpdg->GetParticle(fPDG[1])->Mass(); 
+
+    Double_t thp  = TMath::ACos( fRand->Uniform(-1,1) );
+    Double_t php  = fRand->Uniform(0, TMath::TwoPi());
+    Float_t Epcm  = (W2 + M_nf*M_nf - Mpi*Mpi)/(2.0*W);   
+    Float_t ppcm  = TMath::Sqrt( (Epcm*Epcm - M_nf*M_nf) );
+    Float_t pxpcm = ppcm * TMath::Sin( thp ) * TMath::Cos( php );
+    Float_t pypcm = ppcm * TMath::Sin( thp ) * TMath::Sin( php );
+    Float_t pzpcm = -ppcm * TMath::Cos( thp );
+    
+    TLorentzVector nucleonP4( pxpcm,pypcm,pzpcm,Epcm );
+    TLorentzVector pionP4( -pxpcm,-pypcm,-pzpcm, TMath::Sqrt( ppcm*ppcm + Mpi*Mpi ) );
+    
+    TVector3 boost = XP4.BoostVector();
+    pionP4.Boost( boost );
+    nucleonP4.Boost( boost );
+
+    *fP4Lab[0] = nucleonP4;
+    *fP4Lab[1] = pionP4;
+
+    Double_t costhpcm  = TMath::Cos( thp );
+    Double_t conv      = TMath::Pi()/( nucleonP4.E() * nucleonP4.E() ); 
+    Double_t Mandel_s  = 2*mt*beamE + mt*mt;
+
+    Double_t dSigPiPhoto = conv * 0.72 * TMath::Power( Mandel_s/10.9, 7.5 ) 
+      * TMath::Power((1-costhpcm), -1.0); 
+      
+    fWeight = L * dOmega * dSigPiPhoto * 1e-33; // need brem photon frac correction
+    //    cout << "Pion photo " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigPiPhoto*1e-36 << endl;
+
+  }    
 }
 
 // ----------------------------------------------------------------------------
-// Use CTEQ6 parameterization
+// Use CTEQ6 parameterization for DIS PDFs
+// ----------------------------------------------------------------------------
 
 void initcteqpdf(){
 
-  __dis_pdf = cteq_pdf_alloc_id(400); // mode 400 = cteq6.6?
+  __dis_pdf = cteq_pdf_alloc_id(400); 
 
   assert(__dis_pdf);
 }
-
-// // ----------------------------------------------------------------------------
 
 double dissigma( double ebeam, double th, double eprime ){
 
@@ -294,16 +458,10 @@ double dissigma( double ebeam, double th, double eprime ){
 
     double Q2 = 2.0*eprime*ebeam*(1.0-cos(th));
     double nu = ebeam-eprime;
-    double Mp = 0.938;
+    double Mp = 0.93827;
 
     double x = Q2/(2.0*Mp*nu);
     double y = nu/ebeam;
-
-    if( ! (0.0 < x && x < 1.0 && 0.0 < y && y < 1.0) ){
-	printf("WARNING %s line %d  x = %f, y = %f -> eprime = %f GeV   th = %f deg  ebeam = %f GeV\n", __FILE__,
-		__LINE__, x, y, eprime, th*180/3.14159, ebeam );
-	return 0.0;;
-    }
 
     double qu = cteq_pdf_evolvepdf(__dis_pdf, 1, x, sqrt(Q2) );
     double qd = cteq_pdf_evolvepdf(__dis_pdf, 2, x, sqrt(Q2) );
@@ -335,3 +493,5 @@ double dissigma( double ebeam, double th, double eprime ){
 
     return ds_dOmega_dE*pow(hbarc,2)*1e7; // GeV2 -> nb
  }
+
+// ----------------------------------------------------------------------------

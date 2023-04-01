@@ -65,18 +65,18 @@ private:
   Int_t                      fNGenBranches;   
 
   Int_t                     fNPrimParticles;   
-  Float_t                   fWeight;
+  Double_t                   fWeight;
   Int_t                     fFlag;
 
   Int_t                     fPDG[fMaxprim];
   
-  Float_t                   fVx[fMaxprim];
-  Float_t                   fVy[fMaxprim];
-  Float_t                   fVz[fMaxprim];
-  Float_t                   fPx[fMaxprim];
-  Float_t                   fPy[fMaxprim];
-  Float_t                   fPz[fMaxprim];
-  Float_t                   fE[fMaxprim];
+  Double_t                   fVx[fMaxprim];
+  Double_t                   fVy[fMaxprim];
+  Double_t                   fVz[fMaxprim];
+  Double_t                   fPx[fMaxprim];
+  Double_t                   fPy[fMaxprim];
+  Double_t                   fPz[fMaxprim];
+  Double_t                   fE[fMaxprim];
 
   
 };

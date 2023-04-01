@@ -48,20 +48,20 @@ void OutputManager::InitOutput()
   fROOTtree->SetAutoSave();
 
   // Set Event Branches
-  fROOTtree->Branch("Event_weight",   &fEvent_weight, "Event_weight/F");  
+  fROOTtree->Branch("Event_weight",   &fEvent_weight, "Event_weight/D");  
   fROOTtree->Branch("Event_flag",     &fEvent_flag,   "Event_flag/I");  
   fROOTtree->Branch("Event_num",      &fEvent_num,    "Event_num/I");  
 
   // Set Primary Branches
   fROOTtree->Branch("Primary_Nhits",  &fPrimary_Nhits, "Primary_Nhits/I");  
   fROOTtree->Branch("Primary_pdg",    fPrimary_pdg,    "Primary_pdg[Primary_Nhits]/I");
-  fROOTtree->Branch("Primary_E",      fPrimary_E,      "Primary_E[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_x",      fPrimary_xpos,   "Primary_x[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_y",      fPrimary_ypos,   "Primary_y[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_z",      fPrimary_zpos,   "Primary_z[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_px",     fPrimary_px,     "Primary_px[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_py",     fPrimary_py,     "Primary_py[Primary_Nhits]/F");
-  fROOTtree->Branch("Primary_pz",     fPrimary_pz,     "Primary_pz[Primary_Nhits]/F");
+  fROOTtree->Branch("Primary_E",      fPrimary_E,      "Primary_E[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_x",      fPrimary_xpos,   "Primary_x[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_y",      fPrimary_ypos,   "Primary_y[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_z",      fPrimary_zpos,   "Primary_z[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_px",     fPrimary_px,     "Primary_px[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_py",     fPrimary_py,     "Primary_py[Primary_Nhits]/D");
+  fROOTtree->Branch("Primary_pz",     fPrimary_pz,     "Primary_pz[Primary_Nhits]/D");
 
   // Set VirtualDetector Hit Branches
   fROOTtree->Branch("Virtual_Nhits", &fVirtual_Nhits, "Virtual_Nhits/I");  
@@ -72,17 +72,17 @@ void OutputManager::InitOutput()
   fROOTtree->Branch("Virtual_col",   fVirtual_col,    "Virtual_col[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_tid",   fVirtual_tid,    "Virtual_tid[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_pid",   fVirtual_pid,    "Virtual_pid[Virtual_Nhits]/I");
-  fROOTtree->Branch("Virtual_E",     fVirtual_E,      "Virtual_E[Virtual_Nhits]/F" );
-  fROOTtree->Branch("Virtual_t",     fVirtual_t,      "Virtual_t[Virtual_Nhits]/F" );
-  fROOTtree->Branch("Virtual_x",     fVirtual_xpos,   "Virtual_x[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_y",     fVirtual_ypos,   "Virtual_y[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_z",     fVirtual_zpos,   "Virtual_z[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_px",    fVirtual_px,     "Virtual_px[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_py",    fVirtual_py,     "Virtual_py[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_pz",    fVirtual_pz,     "Virtual_pz[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_vx",    fVirtual_vx,     "Virtual_vx[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_vy",    fVirtual_vy,     "Virtual_vy[Virtual_Nhits]/F"  );
-  fROOTtree->Branch("Virtual_vz",    fVirtual_vz,     "Virtual_vz[Virtual_Nhits]/F"  );
+  fROOTtree->Branch("Virtual_E",     fVirtual_E,      "Virtual_E[Virtual_Nhits]/D" );
+  fROOTtree->Branch("Virtual_t",     fVirtual_t,      "Virtual_t[Virtual_Nhits]/D" );
+  fROOTtree->Branch("Virtual_x",     fVirtual_xpos,   "Virtual_x[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_y",     fVirtual_ypos,   "Virtual_y[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_z",     fVirtual_zpos,   "Virtual_z[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_px",    fVirtual_px,     "Virtual_px[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_py",    fVirtual_py,     "Virtual_py[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_pz",    fVirtual_pz,     "Virtual_pz[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_vx",    fVirtual_vx,     "Virtual_vx[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_vy",    fVirtual_vy,     "Virtual_vy[Virtual_Nhits]/D"  );
+  fROOTtree->Branch("Virtual_vz",    fVirtual_vz,     "Virtual_vz[Virtual_Nhits]/D"  );
 
   // Set RealDetector Hit Branches
   fROOTtree->Branch("Real_Nhits", &fReal_Nhits, "Real_Nhits/I");  
@@ -90,11 +90,11 @@ void OutputManager::InitOutput()
   fROOTtree->Branch("Real_mod",   fReal_mod,    "Real_mod[Real_Nhits]/I");
   fROOTtree->Branch("Real_row",   fReal_row,    "Real_row[Real_Nhits]/I");
   fROOTtree->Branch("Real_col",   fReal_col,    "Real_col[Real_Nhits]/I");
-  fROOTtree->Branch("Real_edep",  fReal_Edep,   "Real_edep[Real_Nhits]/F" );
-  fROOTtree->Branch("Real_t",     fReal_t,      "Real_t[Real_Nhits]/F" );
-  fROOTtree->Branch("Real_x",     fReal_xpos,   "Real_x[Real_Nhits]/F"  );
-  fROOTtree->Branch("Real_y",     fReal_ypos,   "Real_y[Real_Nhits]/F"  );
-  fROOTtree->Branch("Real_z",     fReal_zpos,   "Real_z[Real_Nhits]/F"  );
+  fROOTtree->Branch("Real_edep",  fReal_Edep,   "Real_edep[Real_Nhits]/D" );
+  fROOTtree->Branch("Real_t",     fReal_t,      "Real_t[Real_Nhits]/D" );
+  fROOTtree->Branch("Real_x",     fReal_xpos,   "Real_x[Real_Nhits]/D"  );
+  fROOTtree->Branch("Real_y",     fReal_ypos,   "Real_y[Real_Nhits]/D"  );
+  fROOTtree->Branch("Real_z",     fReal_zpos,   "Real_z[Real_Nhits]/D"  );
 }
 
 //---------------------------------------------------------------------------
@@ -183,22 +183,22 @@ void OutputManager::FillVirtualArray( Int_t hitn )
     fVirtual_pdg[hitn]    = (Int_t)fVirtual_pdef->GetPDGEncoding();
     fVirtual_tid[hitn]    = (Int_t)fVirtual_Tid;
     fVirtual_pid[hitn]    = (Int_t)fVirtual_Pid;
-    fVirtual_t[hitn]      = (Float_t)fVirtual_time *ns;                                   
-    fVirtual_E[hitn]      = (Float_t)fVirtual_energy *MeV;                                
+    fVirtual_t[hitn]      = (Double_t)fVirtual_time *ns;                                   
+    fVirtual_E[hitn]      = (Double_t)fVirtual_energy *MeV;                                
 
-    Float_t xpost = (Float_t)fVirtual_pospost.getX() /cm;                                                          
-    Float_t ypost = (Float_t)fVirtual_pospost.getY() /cm;                                                          
-    Float_t zpost = (Float_t)fVirtual_pospost.getZ() /cm;                                                          
+    Double_t xpost = (Double_t)fVirtual_pospost.getX() /cm;                                                          
+    Double_t ypost = (Double_t)fVirtual_pospost.getY() /cm;                                                          
+    Double_t zpost = (Double_t)fVirtual_pospost.getZ() /cm;                                                          
 
     fVirtual_xpos[hitn]   = xpost;
     fVirtual_ypos[hitn]   = ypost;
     fVirtual_zpos[hitn]   = zpost;
-    fVirtual_px[hitn]     = (Float_t)fVirtual_p3.getX();                             
-    fVirtual_py[hitn]     = (Float_t)fVirtual_p3.getY();                             
-    fVirtual_pz[hitn]     = (Float_t)fVirtual_p3.getZ();
-    fVirtual_vx[hitn]     = (Float_t)fVirtual_vtx.getX()/cm;                             
-    fVirtual_vy[hitn]     = (Float_t)fVirtual_vtx.getY()/cm;                                                          
-    fVirtual_vz[hitn]     = (Float_t)fVirtual_vtx.getZ()/cm;                             
+    fVirtual_px[hitn]     = (Double_t)fVirtual_p3.getX();                             
+    fVirtual_py[hitn]     = (Double_t)fVirtual_p3.getY();                             
+    fVirtual_pz[hitn]     = (Double_t)fVirtual_p3.getZ();
+    fVirtual_vx[hitn]     = (Double_t)fVirtual_vtx.getX()/cm;                             
+    fVirtual_vy[hitn]     = (Double_t)fVirtual_vtx.getY()/cm;                                                          
+    fVirtual_vz[hitn]     = (Double_t)fVirtual_vtx.getZ()/cm;                             
     
     if( fVirtual_detid >= 1 && fVirtual_detid <= fNearm ) { 
       fVirtual_det[hitn] = 0;                               // NPS
@@ -230,15 +230,15 @@ void OutputManager::FillRealArray( G4int hitn )
 
   if( hitn < fMaxhits ) {
     
-    fReal_Edep[hitn]   = (Float_t)fReal_edep *MeV;                                   
-    fReal_t[hitn]      = (Float_t)fReal_time *ns;                                   
+    fReal_Edep[hitn]   = (Double_t)fReal_edep *MeV;                                   
+    fReal_t[hitn]      = (Double_t)fReal_time *ns;                                   
 
-    Float_t xpre  = (Float_t)fReal_pospre.getX() /cm;                             
-    Float_t ypre  = (Float_t)fReal_pospre.getY() /cm;                                                          
-    Float_t zpre  = (Float_t)fReal_pospre.getZ() /cm;                                                          
-    Float_t xpost = (Float_t)fReal_pospost.getX() /cm;                                                          
-    Float_t ypost = (Float_t)fReal_pospost.getY() /cm;                                                          
-    Float_t zpost = (Float_t)fReal_pospost.getZ() /cm;                                                          
+    Double_t xpre  = (Double_t)fReal_pospre.getX() /cm;                             
+    Double_t ypre  = (Double_t)fReal_pospre.getY() /cm;                                                          
+    Double_t zpre  = (Double_t)fReal_pospre.getZ() /cm;                                                          
+    Double_t xpost = (Double_t)fReal_pospost.getX() /cm;                                                          
+    Double_t ypost = (Double_t)fReal_pospost.getY() /cm;                                                          
+    Double_t zpost = (Double_t)fReal_pospost.getZ() /cm;                                                          
 
     fReal_xpos[hitn]   = (xpre + xpost)/2.;
     fReal_ypos[hitn]   = (ypre + ypost)/2.;
@@ -276,13 +276,13 @@ void OutputManager::FillPrimaryArray( G4int primn )
   if( primn < fMaxprim ) {
     
     fPrimary_pdg[primn]  = (Int_t)fPrimary_PDef->GetPDGEncoding();
-    fPrimary_E[primn]    = (Float_t)fPrimary_energy *MeV; 
-    fPrimary_xpos[primn] = (Float_t)fPrimary_vtx.getX() /cm;                             
-    fPrimary_ypos[primn] = (Float_t)fPrimary_vtx.getY() /cm;                             
-    fPrimary_zpos[primn] = (Float_t)fPrimary_vtx.getZ() /cm;                             
-    fPrimary_px[primn]   = (Float_t)fPrimary_dir.getX() /cm;                             
-    fPrimary_py[primn]   = (Float_t)fPrimary_dir.getY() /cm;                             
-    fPrimary_pz[primn]   = (Float_t)fPrimary_dir.getZ() /cm;                             
+    fPrimary_E[primn]    = (Double_t)fPrimary_energy *MeV; 
+    fPrimary_xpos[primn] = (Double_t)fPrimary_vtx.getX() /cm;                             
+    fPrimary_ypos[primn] = (Double_t)fPrimary_vtx.getY() /cm;                             
+    fPrimary_zpos[primn] = (Double_t)fPrimary_vtx.getZ() /cm;                             
+    fPrimary_px[primn]   = (Double_t)fPrimary_dir.getX() /cm;                             
+    fPrimary_py[primn]   = (Double_t)fPrimary_dir.getY() /cm;                             
+    fPrimary_pz[primn]   = (Double_t)fPrimary_dir.getZ() /cm;                             
     
     fPrimary_Nhits++;
     
@@ -295,7 +295,7 @@ void OutputManager::FillPrimaryArray( G4int primn )
 void OutputManager::FillTree(G4double weight, G4int flag, G4int num)
 {
 
-  fEvent_weight = (Float_t)weight;
+  fEvent_weight = (Double_t)weight;
   fEvent_flag   = (Int_t)flag;
   fEvent_num    = (Int_t)num;
 

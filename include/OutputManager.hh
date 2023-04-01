@@ -70,7 +70,7 @@ private:
   const G4int           fNharmCol  = 16;
 
   // Event
-  Float_t               fEvent_weight;
+  Double_t               fEvent_weight;
   Int_t                 fEvent_flag;
   Int_t                 fEvent_num;
   
@@ -84,13 +84,13 @@ private:
 
   Int_t                 fPrimary_Nhits;
   Int_t                 fPrimary_pdg[fMaxprim];
-  Float_t               fPrimary_E[fMaxprim];
-  Float_t               fPrimary_xpos[fMaxprim];
-  Float_t               fPrimary_ypos[fMaxprim];
-  Float_t               fPrimary_zpos[fMaxprim];
-  Float_t               fPrimary_px[fMaxprim];
-  Float_t               fPrimary_py[fMaxprim];
-  Float_t               fPrimary_pz[fMaxprim];
+  Double_t               fPrimary_E[fMaxprim];
+  Double_t               fPrimary_xpos[fMaxprim];
+  Double_t               fPrimary_ypos[fMaxprim];
+  Double_t               fPrimary_zpos[fMaxprim];
+  Double_t               fPrimary_px[fMaxprim];
+  Double_t               fPrimary_py[fMaxprim];
+  Double_t               fPrimary_pz[fMaxprim];
 
   // Virtual detectors
   static const Int_t    fMaxhits = 50000;
@@ -114,17 +114,17 @@ private:
   Int_t                 fVirtual_col[fMaxhits];
   Int_t                 fVirtual_tid[fMaxhits];
   Int_t                 fVirtual_pid[fMaxhits];
-  Float_t               fVirtual_E[fMaxhits];
-  Float_t               fVirtual_t[fMaxhits];
-  Float_t               fVirtual_xpos[fMaxhits];
-  Float_t               fVirtual_ypos[fMaxhits];
-  Float_t               fVirtual_zpos[fMaxhits];
-  Float_t               fVirtual_px[fMaxhits];
-  Float_t               fVirtual_py[fMaxhits];
-  Float_t               fVirtual_pz[fMaxhits];
-  Float_t               fVirtual_vx[fMaxhits];
-  Float_t               fVirtual_vy[fMaxhits];
-  Float_t               fVirtual_vz[fMaxhits];
+  Double_t               fVirtual_E[fMaxhits];
+  Double_t               fVirtual_t[fMaxhits];
+  Double_t               fVirtual_xpos[fMaxhits];
+  Double_t               fVirtual_ypos[fMaxhits];
+  Double_t               fVirtual_zpos[fMaxhits];
+  Double_t               fVirtual_px[fMaxhits];
+  Double_t               fVirtual_py[fMaxhits];
+  Double_t               fVirtual_pz[fMaxhits];
+  Double_t               fVirtual_vx[fMaxhits];
+  Double_t               fVirtual_vy[fMaxhits];
+  Double_t               fVirtual_vz[fMaxhits];
 
   // Real detectors
   G4ThreeVector         fReal_pospre;
@@ -138,11 +138,11 @@ private:
   Int_t                 fReal_mod[fMaxhits];
   Int_t                 fReal_row[fMaxhits];
   Int_t                 fReal_col[fMaxhits];
-  Float_t               fReal_Edep[fMaxhits];
-  Float_t               fReal_t[fMaxhits];
-  Float_t               fReal_xpos[fMaxhits];
-  Float_t               fReal_ypos[fMaxhits];
-  Float_t               fReal_zpos[fMaxhits];
+  Double_t               fReal_Edep[fMaxhits];
+  Double_t               fReal_t[fMaxhits];
+  Double_t               fReal_xpos[fMaxhits];
+  Double_t               fReal_ypos[fMaxhits];
+  Double_t               fReal_zpos[fMaxhits];
 
 };
 
