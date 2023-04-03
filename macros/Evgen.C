@@ -7,6 +7,8 @@
 #include "TSystem.h"
 #include "TDatabasePDG.h"
 #include "TPDGCode.h"
+#include "TF1.h"
+#include "TH1.h"
 
 #include "cteq/cteqpdf.h"
 #include "Inelastic.h"
@@ -48,11 +50,10 @@ Double_t      fE[fMaxparticles];
 Int_t         fPDG[fMaxparticles];
 
 enum { kElastic, kDIS, kQE, kInelastic, kPiPhoto, kNReact }; 
-//enum { kElastic, kDIS, kNReact }; 
 
 Double_t fRasterSize  = 0.2;   // cm
 Double_t fTarLength   = 10.;   // cm
-Double_t fWindowThick = 0.1;   // cm
+Double_t fWindowThick = 0.5;   // cm
 Double_t fBeamE       = 6.6;   // GeV
 Double_t fThetaMin    = 10.5 * TMath::DegToRad(); 
 Double_t fThetaMax    = 50.5 * TMath::DegToRad(); 
@@ -90,7 +91,8 @@ void Evgen( Int_t run_no = 9999, Int_t ngen = 1000 )
      fflush(stdout);
     }
 
-    fReactFlag = fRand->Integer( kNReact );
+    fReactFlag = fRand->Integer( 2 );
+    //    fReactFlag = fRand->Integer( kNReact );
     GenerateReaction();
     
     if( fNparticles < 1 ) continue; 
@@ -199,14 +201,14 @@ void GenerateReaction()
     Double_t GE    = (1.0-0.24*tau)/(1.0 + 10.98*tau + 12.82*tau*tau + 21.97*tau*tau*tau );
     Double_t GM    = 2.79*(1.0+0.12*tau)/(1.0 + 10.97*tau + 18.86*tau*tau + 6.55*tau*tau*tau );
     
-    Double_t dSigMott  = 1e10*hbarc*hbarc*alpha*alpha/
+    Double_t dSigMott  = 1e7*hbarc*hbarc*alpha*alpha/
       (4*beamP4.E()*beamP4.E()*TMath::Power(TMath::Sin(th/2),4))
       *(scatP4.E()/beamP4.E())*TMath::Power(TMath::Cos(th/2),2);  
     Double_t dSigRosen = dSigMott * 
-      ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
+      ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) ); // nb/sr
     
-    fWeight = L * dOmega * dSigRosen*1e-36;
-    //    cout << "EP " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-36 << endl;
+    fWeight = L * dOmega * dSigRosen*1e-33;
+    //    cout << "EP " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-33 << endl;
   }
 
 
@@ -233,7 +235,7 @@ void GenerateReaction()
 
       *fP4Lab[0] = scatP4;
       
-      Double_t  dSigDIS = dissigma( (double)beamP4.E(), (double)th, (double)scatP4.E() ); 
+      Double_t  dSigDIS = dissigma( (double)beamP4.E(), (double)th, (double)scatP4.E() ); // nb/(GeV sr)
       
       fWeight = L * dOmega * (Emax - Emin) * dSigDIS * 1e-33;
       //      cout << "DIS " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << Emax-Emin << "\t" << dSigDIS*1e-33  << endl;
@@ -244,12 +246,14 @@ void GenerateReaction()
   // ----------------------------------------------------------------------------
 
   if( fReactFlag == kQE ) {
+
+    L = (2.7*6.022e23/27)*2*fWindowThick*(60.e-6/1.602e-19); // 60uA on Al windows
     
     if( fRand->Uniform(0,1) < 1.0/2.0 )
       zv = fRand->Uniform( -fWindowThick - fTarLength/2, -fTarLength/2 );
     else
       zv = fRand->Uniform( fTarLength/2, fTarLength/2 + fWindowThick);
-
+    
     fNparticles = 2;
     fVertex[0]->SetXYZ( xv, yv, zv );
     fVertex[1]->SetXYZ( xv, yv, zv );
@@ -308,7 +312,7 @@ void GenerateReaction()
       ( (GE*GE + tau*GM*GM)/(1+tau) + (2*tau*GM*GM)*TMath::Power(TMath::Tan(th/2),2) );
     
     fWeight = L * dOmega * dSigRosen*1e-36;
-    //    cout << "EP " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-36 << endl;
+    //    cout << "QE " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigRosen*1e-36 << endl;
   }
 
   // ----------------------------------------------------------------------------
@@ -329,7 +333,7 @@ void GenerateReaction()
     Double_t W2min = pow(( mt + fDBpdg->GetParticle(111)->Mass() ), 2.0);
     Double_t Emin  = 0.2; 
     Double_t Emax  = (fBeamE / (1.0 + fBeamE/mt*(1.0-TMath::Cos(th))))-0.14;
-    
+
     scatE = fRand->Uniform( Emin, Emax );
     scatP = TMath::Sqrt( scatE*scatE - me*me );
     scatP4.SetPxPyPzE( scatP*scatP3.X(), scatP*scatP3.Y(), scatP*scatP3.Z(), scatE ); 
@@ -376,7 +380,7 @@ void GenerateReaction()
     *fP4Lab[1] = nucleonP4;
     *fP4Lab[2] = pionP4;
 
-    Double_t dSigInel = sigma_p( (double)beamP4.E(), (double)th, (double)scatP4.E() );  
+    Double_t dSigInel = sigma_p( (double)beamP4.E(), (double)th, (double)scatP4.E() );  // nd/(GeV sr)
       
     fWeight = L * dOmega * (Emax - Emin) * dSigInel * 1e-33;
     //    cout << "Inelastic " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << Emax-Emin << "\t" << dSigInel*1e-33  << endl;
@@ -397,9 +401,11 @@ void GenerateReaction()
     th = TMath::ACos( fRand->Uniform( TMath::Cos( fThetaMax ), TMath::Cos( fThetaMin ) ));
     ph = fRand->Uniform( -TMath::Pi(), TMath::Pi()  );
 
-    Double_t Emin  = 6.0; 
+    Double_t Emin  = 2.0; 
     Double_t Emax  = fBeamE;
-    Double_t beamE = fRand->Uniform( Emin, Emax ); // need 1/E distribution
+    TF1* fbrem     = new TF1("fbrem","1/x", Emin, Emax);
+    TH1* hbrem     = (TH1*)fbrem->GetHistogram();
+    Double_t beamE = hbrem->GetRandom(); //fRand->Uniform( Emin, Emax );
     beamP4.SetPxPyPzE( 0., 0., beamE, beamE ); 
 
     TLorentzVector XP4 = targP4 + beamP4;
@@ -432,10 +438,10 @@ void GenerateReaction()
     Double_t conv      = TMath::Pi()/( nucleonP4.E() * nucleonP4.E() ); 
     Double_t Mandel_s  = 2*mt*beamE + mt*mt;
 
-    Double_t dSigPiPhoto = conv * 0.72 * TMath::Power( Mandel_s/10.9, 7.5 ) 
-      * TMath::Power((1-costhpcm), -1.0); 
+    Double_t dSigPiPhoto = conv * 0.72 * TMath::Power( 10.9/Mandel_s, 7.5 ) 
+      * TMath::Power((1-costhpcm), -1.0); // nb/sr
       
-    fWeight = L * dOmega * dSigPiPhoto * 1e-33; // need brem photon frac correction
+    fWeight = L * (0.2/beamE)*0.03 * dOmega * dSigPiPhoto * 1e-33; // need brem photon frac correction
     //    cout << "Pion photo " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigPiPhoto*1e-36 << endl;
 
   }    

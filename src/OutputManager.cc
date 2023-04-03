@@ -204,7 +204,7 @@ void OutputManager::FillVirtualArray( Int_t hitn )
       fVirtual_det[hitn] = 0;                               // NPS
       fVirtual_mod[hitn] = (fVirtual_detid-1)/(fNearm/6);          // Module
       fVirtual_row[hitn] = (fVirtual_detid-1)%(fNearm/6)/fNearmCol;       // Row
-      fVirtual_col[hitn] = (fVirtual_detid-1)%(fNearm/6)/fNearmCol;       // Column
+      fVirtual_col[hitn] = (fVirtual_detid-1)%(fNearm/6)%fNearmCol;       // Column
     }
     else if( fVirtual_detid >= (fNearm+1) && fVirtual_detid <= (fNearm+fNhodo) ) { 
       fVirtual_det[hitn] = 1;                               // Hodoscope
@@ -248,7 +248,7 @@ void OutputManager::FillRealArray( G4int hitn )
       fReal_det[hitn] = 0;                               // NPS
       fReal_mod[hitn] = (fReal_detid-1)/(fNearm/6);          // Module
       fReal_row[hitn] = (fReal_detid-1)%(fNearm/6)/fNearmCol;       // Row
-      fReal_col[hitn] = (fReal_detid-1)%(fNearm/6)/fNearmCol;       // Column
+      fReal_col[hitn] = (fReal_detid-1)%(fNearm/6)%fNearmCol;       // Column
     }
     else if( fReal_detid >= (fNearm+1) && fReal_detid <= (fNearm+fNhodo) ) { 
       fReal_det[hitn] = 1;                               // Hodoscope
