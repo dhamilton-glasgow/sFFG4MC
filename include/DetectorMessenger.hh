@@ -28,9 +28,10 @@ private:
 
   G4UIcmdWithADoubleAndUnit*   fNPSAngleCmd;  
   G4UIcmdWithADoubleAndUnit*   fNPSDistanceCmd;  
+  G4UIcmdWithADoubleAndUnit*   fNPSShieldThicknessCmd;  
   G4UIcmdWithADoubleAndUnit*   fHCALAngleCmd;  
   G4UIcmdWithADoubleAndUnit*   fHCALDistanceCmd;  
-  G4UIcmdWithADoubleAndUnit*   fShieldThicknessCmd;  
+  G4UIcmdWithADoubleAndUnit*   fHCALShieldThicknessCmd;  
   G4UIcmdWithADoubleAndUnit*   fWindowThicknessCmd;  
   G4UIcmdWithADoubleAndUnit*   fTargetLengthCmd;  
 

@@ -62,12 +62,12 @@ private:
   TFile*                fROOTfile;
   TTree*                fROOTtree;
 
-  const G4int           fNearm    = 960;
-  const G4int           fNearmCol = 32;
+  const G4int           fNearm    = 1200;
+  const G4int           fNearmCol = 240;
   const G4int           fNhodo    = 7200;
-  const G4int           fNhodoCol = 80;
+  const G4int           fNhodoCol = 480;
   const G4int           fNharm    = 288;
-  const G4int           fNharmCol  = 16;
+  const G4int           fNharmCol  = 96;
 
   // Event
   Double_t               fEvent_weight;
@@ -109,7 +109,6 @@ private:
   Int_t                 fVirtual_Nhits;
   Int_t                 fVirtual_pdg[fMaxhits];
   Int_t                 fVirtual_det[fMaxhits];
-  Int_t                 fVirtual_mod[fMaxhits];
   Int_t                 fVirtual_row[fMaxhits];
   Int_t                 fVirtual_col[fMaxhits];
   Int_t                 fVirtual_tid[fMaxhits];
@@ -135,7 +134,6 @@ private:
 
   Int_t                 fReal_Nhits;
   Int_t                 fReal_det[fMaxhits];
-  Int_t                 fReal_mod[fMaxhits];
   Int_t                 fReal_row[fMaxhits];
   Int_t                 fReal_col[fMaxhits];
   Double_t               fReal_Edep[fMaxhits];

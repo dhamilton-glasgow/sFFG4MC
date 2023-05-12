@@ -22,6 +22,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Detect)
   fNPSDistanceCmd->SetGuidance("Set Earm distance  (value and unit)");
   fNPSDistanceCmd->SetUnitCategory("Length");
 
+  fNPSShieldThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sFFG4MC/detector/setEarmShieldThickness",this);  
+  fNPSShieldThicknessCmd->SetGuidance("Set Earm lead shield thickness  (value and unit)");
+  fNPSShieldThicknessCmd->SetUnitCategory("Length");
+
   fHCALAngleCmd = new G4UIcmdWithADoubleAndUnit("/sFFG4MC/detector/setHarmAngle",this);  
   fHCALAngleCmd->SetGuidance("Set Harm angle  (value and unit)");
   fHCALAngleCmd->SetUnitCategory("Angle");
@@ -30,9 +34,9 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Detect)
   fHCALDistanceCmd->SetGuidance("Set Harm distance  (value and unit)");
   fHCALDistanceCmd->SetUnitCategory("Length");
 
-  fShieldThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sFFG4MC/detector/setShieldThickness",this);  
-  fShieldThicknessCmd->SetGuidance("Set Harm lead shield thickness  (value and unit)");
-  fShieldThicknessCmd->SetUnitCategory("Length");
+  fHCALShieldThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sFFG4MC/detector/setHarmShieldThickness",this);  
+  fHCALShieldThicknessCmd->SetGuidance("Set Harm lead shield thickness  (value and unit)");
+  fHCALShieldThicknessCmd->SetUnitCategory("Length");
 
   fWindowThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sFFG4MC/detector/setWindowThickness",this);  
   fWindowThicknessCmd->SetGuidance("Set scattering chamber window thickness (value and unit)");
@@ -65,14 +69,17 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   if(command == fNPSDistanceCmd)
     { fDetector->SetNPSDistance(fNPSDistanceCmd->GetNewDoubleValue(newValue)); }
 
+  if(command == fNPSShieldThicknessCmd)
+    { fDetector->SetNPSShieldThickness(fNPSShieldThicknessCmd->GetNewDoubleValue(newValue)); }
+
   if(command == fHCALAngleCmd)
     { fDetector->SetHCALAngle(fHCALAngleCmd->GetNewDoubleValue(newValue)); }
 
   if(command == fHCALDistanceCmd)
     { fDetector->SetHCALDistance(fHCALDistanceCmd->GetNewDoubleValue(newValue)); }
 
-  if(command == fShieldThicknessCmd)
-    { fDetector->SetShieldThickness(fShieldThicknessCmd->GetNewDoubleValue(newValue)); }
+  if(command == fHCALShieldThicknessCmd)
+    { fDetector->SetHCALShieldThickness(fHCALShieldThicknessCmd->GetNewDoubleValue(newValue)); }
 
   if(command == fWindowThicknessCmd)
     { fDetector->SetWindowThickness(fWindowThicknessCmd->GetNewDoubleValue(newValue)); }

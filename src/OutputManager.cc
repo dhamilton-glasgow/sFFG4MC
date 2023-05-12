@@ -67,7 +67,6 @@ void OutputManager::InitOutput()
   fROOTtree->Branch("Virtual_Nhits", &fVirtual_Nhits, "Virtual_Nhits/I");  
   fROOTtree->Branch("Virtual_pdg",   fVirtual_pdg,    "Virtual_pdg[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_det",   fVirtual_det,    "Virtual_det[Virtual_Nhits]/I");
-  fROOTtree->Branch("Virtual_mod",   fVirtual_mod,    "Virtual_mod[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_row",   fVirtual_row,    "Virtual_row[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_col",   fVirtual_col,    "Virtual_col[Virtual_Nhits]/I");
   fROOTtree->Branch("Virtual_tid",   fVirtual_tid,    "Virtual_tid[Virtual_Nhits]/I");
@@ -87,7 +86,6 @@ void OutputManager::InitOutput()
   // Set RealDetector Hit Branches
   fROOTtree->Branch("Real_Nhits", &fReal_Nhits, "Real_Nhits/I");  
   fROOTtree->Branch("Real_det",   fReal_det,    "Real_det[Real_Nhits]/I");
-  fROOTtree->Branch("Real_mod",   fReal_mod,    "Real_mod[Real_Nhits]/I");
   fROOTtree->Branch("Real_row",   fReal_row,    "Real_row[Real_Nhits]/I");
   fROOTtree->Branch("Real_col",   fReal_col,    "Real_col[Real_Nhits]/I");
   fROOTtree->Branch("Real_edep",  fReal_Edep,   "Real_edep[Real_Nhits]/D" );
@@ -156,7 +154,6 @@ void OutputManager::ZeroArray()
     fVirtual_vy[i]      = -INT_MAX;
     fVirtual_vz[i]      = -INT_MAX;
     fVirtual_det[i]     = -INT_MAX;
-    fVirtual_mod[i]     = -INT_MAX;
     fVirtual_row[i]     = -INT_MAX;
     fVirtual_col[i]     = -INT_MAX;
 
@@ -166,7 +163,6 @@ void OutputManager::ZeroArray()
     fReal_ypos[i]       = -INT_MAX;
     fReal_zpos[i]       = -INT_MAX;
     fReal_det[i]        = -INT_MAX;
-    fReal_mod[i]        = -INT_MAX;
     fReal_row[i]        = -INT_MAX;
     fReal_col[i]        = -INT_MAX;
   }
@@ -199,24 +195,21 @@ void OutputManager::FillVirtualArray( Int_t hitn )
     fVirtual_vx[hitn]     = (Double_t)fVirtual_vtx.getX()/cm;                             
     fVirtual_vy[hitn]     = (Double_t)fVirtual_vtx.getY()/cm;                                                          
     fVirtual_vz[hitn]     = (Double_t)fVirtual_vtx.getZ()/cm;                             
-    
+
     if( fVirtual_detid >= 1 && fVirtual_detid <= fNearm ) { 
       fVirtual_det[hitn] = 0;                               // NPS
-      fVirtual_mod[hitn] = (fVirtual_detid-1)/(fNearm/6);          // Module
-      fVirtual_row[hitn] = (fVirtual_detid-1)%(fNearm/6)/fNearmCol;       // Row
-      fVirtual_col[hitn] = (fVirtual_detid-1)%(fNearm/6)%fNearmCol;       // Column
+      fVirtual_row[hitn] = (fVirtual_detid-1)/fNearmCol;       // Row
+      fVirtual_col[hitn] = (fVirtual_detid-1)%fNearmCol;       // Column
     }
-    else if( fVirtual_detid >= (fNearm+1) && fVirtual_detid <= (fNearm+fNhodo) ) { 
-      fVirtual_det[hitn] = 1;                               // Hodoscope
-      fVirtual_mod[hitn] = (fVirtual_detid-(fNearm+1))/(fNhodo/6);       // Module
-      fVirtual_row[hitn] = (fVirtual_detid-(fNearm+1))%(fNhodo/6)/fNhodoCol;    // Row
-      fVirtual_col[hitn] = (fVirtual_detid-(fNearm+1))%(fNhodo/6)%fNhodoCol;    // Column
+    else if( fVirtual_detid >= (fNearm+1) && fVirtual_detid <= (fNearm+fNharm) ) { 
+      fVirtual_det[hitn] = 1;                               // HCAL
+      fVirtual_row[hitn] = (fVirtual_detid-(fNearm+1))/fNharmCol;    // Row
+      fVirtual_col[hitn] = (fVirtual_detid-(fNearm+1))%fNharmCol;    // Column
     }
-    else if( fVirtual_detid >= (fNearm+fNhodo+1) && fVirtual_detid <= (fNearm+fNhodo+fNharm+1) ) { 
-      fVirtual_det[hitn] = 2;                               // HCAL
-      fVirtual_mod[hitn] = (fVirtual_detid-(fNearm+fNhodo+1))/(fNharm/6);        // Module
-      fVirtual_row[hitn] = (fVirtual_detid-(fNearm+fNhodo+1))%(fNharm/6)/fNharmCol;     // Row
-      fVirtual_col[hitn] = (fVirtual_detid-(fNearm+fNhodo+1))%(fNharm/6)%fNharmCol;     // Column
+    else if( fVirtual_detid >= (fNearm+fNharm+1) && fVirtual_detid <= (fNearm+fNhodo+fNharm+1) ) { 
+      fVirtual_det[hitn] = 2;                               // HODO
+      fVirtual_row[hitn] = (fVirtual_detid-(fNearm+fNharm+1))/fNhodoCol;     // Row
+      fVirtual_col[hitn] = (fVirtual_detid-(fNearm+fNharm+1))%fNhodoCol;     // Column
     }
 
     fVirtual_Nhits++;
@@ -228,7 +221,7 @@ void OutputManager::FillVirtualArray( Int_t hitn )
 void OutputManager::FillRealArray( G4int hitn ) 
 {
 
-  if( hitn < fMaxhits ) {
+  if( hitn < fMaxhits && fReal_detid != 0 && fReal_detid != 9999 ) {
     
     fReal_Edep[hitn]   = (Double_t)fReal_edep *MeV;                                   
     fReal_t[hitn]      = (Double_t)fReal_time *ns;                                   
@@ -246,21 +239,18 @@ void OutputManager::FillRealArray( G4int hitn )
 
     if( fReal_detid >= 1 && fReal_detid <= fNearm ) { 
       fReal_det[hitn] = 0;                               // NPS
-      fReal_mod[hitn] = (fReal_detid-1)/(fNearm/6);          // Module
-      fReal_row[hitn] = (fReal_detid-1)%(fNearm/6)/fNearmCol;       // Row
-      fReal_col[hitn] = (fReal_detid-1)%(fNearm/6)%fNearmCol;       // Column
+      fReal_row[hitn] = (fReal_detid-1)/fNearmCol;       // Row
+      fReal_col[hitn] = (fReal_detid-1)%fNearmCol;       // Column
     }
-    else if( fReal_detid >= (fNearm+1) && fReal_detid <= (fNearm+fNhodo) ) { 
-      fReal_det[hitn] = 1;                               // Hodoscope
-      fReal_mod[hitn] = (fReal_detid-(fNearm+1))/(fNhodo/6);       // Module
-      fReal_row[hitn] = (fReal_detid-(fNearm+1))%(fNhodo/6)/fNhodoCol;    // Row
-      fReal_col[hitn] = (fReal_detid-(fNearm+1))%(fNhodo/6)%fNhodoCol;    // Column
+    else if( fReal_detid >= (fNearm+1) && fReal_detid <= (fNearm+fNharm) ) { 
+      fReal_det[hitn] = 1;                               // HCAL
+      fReal_row[hitn] = (fReal_detid-(fNearm+1))/fNharmCol;    // Row
+      fReal_col[hitn] = (fReal_detid-(fNearm+1))%fNharmCol;    // Column
     }
-    else if( fReal_detid >= (fNearm+fNhodo+1) && fReal_detid <= (fNearm+fNhodo+fNharm+1) ) { 
-      fReal_det[hitn] = 2;                               // HCAL
-      fReal_mod[hitn] = (fReal_detid-(fNearm+fNhodo+1))/(fNharm/6);        // Module
-      fReal_row[hitn] = (fReal_detid-(fNearm+fNhodo+1))%(fNharm/6)/fNharmCol;     // Row
-      fReal_col[hitn] = (fReal_detid-(fNearm+fNhodo+1))%(fNharm/6)%fNharmCol;     // Column
+    else if( fReal_detid >= (fNearm+fNharm+1) && fReal_detid <= (fNearm+fNhodo+fNharm+1) ) { 
+      fReal_det[hitn] = 2;                               // HODO
+      fReal_row[hitn] = (fReal_detid-(fNearm+fNharm+1))/fNhodoCol;     // Row
+      fReal_col[hitn] = (fReal_detid-(fNearm+fNharm+1))%fNhodoCol;     // Column
     }
     
     fReal_Nhits++;

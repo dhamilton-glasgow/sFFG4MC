@@ -30,14 +30,15 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   inline VirtualDetectorSD* GetVirtualDetectorSD() { return fVirtualDetectorSD; };
   inline G4int              GetNoSD()              { return fNSD;               };
 
-  void SetNPSAngle        ( G4double a  ) { fNPSAngle     = a;  }
-  void SetNPSDistance     ( G4double d  ) { fNPSDist      = d;  }
-  void SetHCALAngle       ( G4double an ) { fHCALAngle    = an; }
-  void SetHCALDistance    ( G4double di ) { fHCALDist     = di; }
-  void SetShieldThickness ( G4double t  ) { fShieldThick  = t;  }
-  void SetWindowThickness ( G4double th ) { fSCWinThick   = th; }
-  void SetTargetLength    ( G4double l  ) { fTarLength    = l; }
-  void SetBeamlineOn      ( G4int b  )    { fBeamline     = b; }
+  void SetNPSAngle            ( G4double a  ) { fNPSAngle         = a;  }
+  void SetNPSDistance         ( G4double d  ) { fNPSDist          = d;  }
+  void SetNPSShieldThickness  ( G4double nt ) { fNPSShieldThick   = nt; }
+  void SetHCALAngle           ( G4double an ) { fHCALAngle        = an; }
+  void SetHCALDistance        ( G4double di ) { fHCALDist         = di; }
+  void SetHCALShieldThickness ( G4double t  ) { fHCALShieldThick  = t;  }
+  void SetWindowThickness     ( G4double th ) { fSCWinThick       = th; }
+  void SetTargetLength        ( G4double l  ) { fTarLength        = l; }
+  void SetBeamlineOn          ( G4int b  )    { fBeamline         = b; }
 
   private:
 
@@ -46,28 +47,27 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   G4double           fNPSAngle;
   G4double           fNPSDist;
+  G4double           fNPSShieldThick;
   G4double           fHCALAngle;
   G4double           fHCALDist;
-  G4double           fShieldThick;
+  G4double           fHCALShieldThick;
   G4double           fSCWinThick;
   G4double           fTarLength;
   G4int              fBeamline;
 
-  static const G4int fNPSNrow  = 32;
-  static const G4int fNPSNcol  = 5;
-  static const G4int fNPSNmod  = 6;
+  static const G4int fNPSNrow  = 5;
+  static const G4int fNPSNcol  = 240;
 
-  static const G4int fHodoNrow = 80;
-  static const G4int fHodoNcol = 15;
-  static const G4int fHodoNmod = 6;
+  static const G4int fHCALNrow = 3;
+  static const G4int fHCALNcol = 96;
+
+  static const G4int fHodoNrow = 15;
+  static const G4int fHodoNcol = 480;
   
-  static const G4int fHCALNrow = 16;
-  static const G4int fHCALNcol = 3;
-  static const G4int fHCALNmod = 6;
 
-  static const G4int fNSD      = ( fNPSNrow*fNPSNcol*fNPSNmod
-				   + fHodoNrow*fHodoNcol*fHodoNmod 
-				   + fHCALNrow*fHCALNcol*fHCALNmod 
+  static const G4int fNSD      = ( fNPSNrow*fNPSNcol
+				   + fHodoNrow*fHodoNcol
+				   + fHCALNrow*fHCALNcol
 				   + 1 ); 
 
   G4VPhysicalVolume* fExpHall;

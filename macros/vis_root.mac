@@ -2,8 +2,7 @@
 # Set geometry options
 ##################################################################
 
-/sFFG4MC/detector/setBeamline 0
-/sFFG4MC/detector/setShieldThickness 10 cm
+/sFFG4MC/detector/setBeamline 1
 /sFFG4MC/detector/update
 
 ##################################################################
@@ -31,10 +30,14 @@
 /vis/viewer/select viewer-0
 /vis/viewer/rebuild
 
+/vis/viewer/set/style s             
+/vis/viewer/set/hiddenEdge 1        
+/vis/viewer/set/background white    
+                                      
 ##################################################################
 # Set generator options
 ##################################################################
 
 /sFFG4MC/generator/Mode 1
 /sFFG4MC/generator/Nevents 1
-/sFFG4MC/generator/InputFile macros/testgen.root
+/sFFG4MC/generator/InputFile gen_elastic.root

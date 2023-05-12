@@ -3,7 +3,6 @@
 ##################################################################
 
 /sFFG4MC/detector/setBeamline 0
-/sFFG4MC/detector/setShieldThickness 10 cm
 /sFFG4MC/detector/update
 
 ##################################################################
@@ -17,11 +16,11 @@
 # Set output options
 ##################################################################
 
-/sFFG4MC/output/setOutputFile out/batch_root.root
+/sFFG4MC/output/setOutputFile batch_root.root
 
 ##################################################################
 # Set generator options
 ##################################################################
 
 /sFFG4MC/generator/Mode 1
-/sFFG4MC/generator/InputFile macros/testgen.root
+/sFFG4MC/generator/InputFile testgen.root

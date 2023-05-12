@@ -14,13 +14,14 @@
 	Target is 10cm LH2
 	No scattering chamber or exit beamline
 	(when included. scattering chamber window thickness is 0.05 cm)
-	Earm is an array of 2 x 2 x 20 cm3 PbW04 blocks in six sectors (960 total)
-	Earm is at 15.5 degrees and a distance of 239 cm
+	Earm is an array of 2 x 2 x 20 cm3 PbW04 blocks in a ring (1200 total)
+	Earm is at 15.5 degrees and a distance of 291 cm
+	Harm has a 1 cm thick lead shield
 	Harm is an array of 15 x 15 x 101.2 cm3 scint-Fe blocks (288 total)
 	Harm blocks are 44 pairs of plastic scintillator (10mm) and iron (13mm)
-	Harm is at 42.5 degrees and a distance of 351 cm
+	Harm is at 42.5 degrees and a distance of 376 cm
 	Hodoscope is an plastic scintillator array of 3 x 3 x 10 cm3 detectors (7200 total)
-	Harm has a 10 cm thick lead shield
+	Harm has a 5 cm thick lead shield
 
 	Default units: MeV, cm, ns
 
@@ -50,19 +51,12 @@
 ------------------------------------------------------------------------
  DetectorConstruction options (always call update following any changes)
 
-  	/sFFG4MC/detector/setShieldThickness  
-  	Set Harm lead shield thickness  (value and unit)
-
-  	/sFFG4MC/detector/setWindowThickness
-  	Set scattering chamber window thickness (value and unit)
-
 	/sFFG4MC/detector/setBeamline
   	Set an integer flag for whether to include scattering chamber and beamline (0 or 1)
 
   	/sFFG4MC/detector/update	 
   	Update the detector geometry with changed values
   	Must be run before beamOn if detector has been changed  
-
 
 ------------------------------------------------------------------------
  PhysicsList options (always call in macro before /run/initialize)
@@ -111,17 +105,15 @@
 		Virtual_Nhits	-- number of virtual detector hits in this event
 		Virtual_*[]	-- arrays of virtual hit variables, including pdg, energy, position, direction,
 				   particle vertex, time, track id, mother track id and detector id variables:
-					Virtual_det[] -- which detector (0 for Earm, 1 for hodoscope, 2 for Harm)
-					Virtual_mod[] -- which sector (0 to 5)
-					Virtual_row[] -- which row (0-31 Earm, 0-79 hodoscope, 0-16 Harm)
-					Virtual_col[] -- which col (0-5 Earm, 0-15 hodoscope, 0-3 Harm)
+					Virtual_det[] -- which detector (0 for Earm, 1 for harm, 2 for hodoscope)
+					Virtual_row[] -- which row (0-239 Earm, 0-95 harm, 0-479 hodoscope)
+					Virtual_col[] -- which col (0-5 Earm, 0-3 harm, 0-15 hodoscope)
 		Real_Nhits	-- number of real detector hits in this event
 		Real_*[]	-- arrays of real hit variables, including energy deposit, position, time,
 				   and detector id variables:
-					Real_det[] -- which detector (0 for Earm, 1 for hodoscope, 2 for Harm)
-					Real_mod[] -- which sector (0 to 5)
-					Real_row[] -- which row (0-31 Earm, 0-79 hodoscope, 0-16 Harm)
-					Real_col[] -- which col (0-5 Earm, 0-15 hodoscope, 0-3 Harm)
+					Real_det[] -- which detector (0 for Earm, 1 for harm, 2 for hodoscope)
+					Real_row[] -- which row (0-239 Earm, 0-95 harm, 0-479 hodoscope)
+					Real_col[] -- which col (0-5 Earm, 0-3 harm, 0-15 hodoscope)
 
 
 

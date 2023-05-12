@@ -53,10 +53,12 @@ enum { kElastic, kDIS, kQE, kInelastic, kPiPhoto, kNReact };
 
 Double_t fRasterSize  = 0.2;   // cm
 Double_t fTarLength   = 10.;   // cm
-Double_t fWindowThick = 0.5;   // cm
+Double_t fWindowThick = 0.125; // cm
 Double_t fBeamE       = 6.6;   // GeV
 Double_t fThetaMin    = 10.5 * TMath::DegToRad(); 
 Double_t fThetaMax    = 50.5 * TMath::DegToRad(); 
+// Double_t fThetaMin    = 14.5 * TMath::DegToRad(); 
+// Double_t fThetaMax    = 16.5 * TMath::DegToRad(); 
 
 // ----------------------------------------------------------------------------
 
@@ -91,7 +93,7 @@ void Evgen( Int_t run_no = 9999, Int_t ngen = 1000 )
      fflush(stdout);
     }
 
-    fReactFlag = fRand->Integer( 2 );
+    fReactFlag = fRand->Integer( 3 );
     //    fReactFlag = fRand->Integer( kNReact );
     GenerateReaction();
     
@@ -441,7 +443,7 @@ void GenerateReaction()
     Double_t dSigPiPhoto = conv * 0.72 * TMath::Power( 10.9/Mandel_s, 7.5 ) 
       * TMath::Power((1-costhpcm), -1.0); // nb/sr
       
-    fWeight = L * (0.2/beamE)*0.03 * dOmega * dSigPiPhoto * 1e-33; // need brem photon frac correction
+    fWeight = L * 0.03 * dOmega * dSigPiPhoto * 1e-33; // need brem photon frac correction
     //    cout << "Pion photo " << fWeight << "\t" << L << "\t"<< dOmega << "\t" << dSigPiPhoto*1e-36 << endl;
 
   }    

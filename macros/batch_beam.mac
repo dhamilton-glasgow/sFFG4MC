@@ -3,7 +3,6 @@
 ##################################################################
 
 /sFFG4MC/detector/setBeamline 0
-/sFFG4MC/detector/setWindowThickness 0.05 cm
 /sFFG4MC/detector/update
 
 ##################################################################

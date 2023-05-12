@@ -36,14 +36,15 @@ DetectorConstruction::DetectorConstruction()
   fNistManager  = G4NistManager::Instance();
   fDetMessenger = new DetectorMessenger(this);
 
-  fNPSAngle    = 15.5 *deg; 
-  fNPSDist     = 239.0 *cm;
-  fHCALAngle   = 42.5 *deg;
-  fHCALDist    = 351.0 *cm;
-  fShieldThick = 10.0 *cm;
-  fSCWinThick  = 0.050 *cm;
-  fTarLength   = 10.0 *cm;
-  fBeamline    = 0;
+  fNPSAngle        = 15.5 *deg; 
+  fNPSDist         = 301.0 *cm;
+  fNPSShieldThick  = 1.0 *cm;
+  fHCALAngle       = 42.5 *deg;
+  fHCALDist        = 427.0 *cm;
+  fHCALShieldThick = 5.0 *cm;
+  fSCWinThick      = 0.050 *cm;
+  fTarLength       = 10.0 *cm;
+  fBeamline        = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -54,7 +55,6 @@ DetectorConstruction::~DetectorConstruction()
 }
 
 //---------------------------------------------------------------------------
-
 G4VPhysicalVolume* DetectorConstruction::Construct()
 { 
 
@@ -70,7 +70,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //---------------------------------------------------------------------------
   
   G4Box* expHall_box           = new G4Box("expHall_box",
-					   13. *m, 13. *m, 13. *m );
+					   10.75 *m, 10.75 *m, 10.75 *m );
   
 
   fexpHall_log = new G4LogicalVolume(expHall_box,
@@ -92,7 +92,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     BuildTarget();
   
   //--------------------------------------------------------------------------- 
-  // Create six sector "NPS" electron arm
+  // Create "NPS" electron arm
   //--------------------------------------------------------------------------- 
   
   G4double pbwo4_X = 20.*mm; 
@@ -104,128 +104,146 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4LogicalVolume* pbwo4_log = new G4LogicalVolume(pbwo4_solid,
 						   fNistManager->FindOrBuildMaterial("G4_PbWO4"),
 						   "pbwo4_log");
-
-  //--------------------------------------------------------------------------- 
   
-  G4Box* nps_solid = new G4Box("nps_solid", fNPSNrow*0.5*pbwo4_X, fNPSNcol*0.5*pbwo4_Y, 0.5*pbwo4_Z);
-  
-  G4LogicalVolume* nps_log[fNPSNmod];
-  
+  G4double NPS_x, NPS_y, NPS_z, NPS_th, NPS_ph;
+  G4double NPS_xprime, NPS_yprime, NPS_zprime;
   char stmp[50];
-  for( int im=0 ; im < fNPSNmod ; im++ ) {
+  
+  for( int ix=0 ; ix < fNPSNrow ; ix++ ) {
+    for( int iy=0 ; iy < fNPSNcol ; iy++ ) {
     
-    sprintf( stmp, "nps_log%d", im );
+      sprintf( stmp, "nps%d", SDcount );
+      
+      NPS_x  = 0.0;
+      NPS_y  = -pbwo4_Y + (ix*pbwo4_Y);
+      NPS_z  = fNPSDist;
     
-    nps_log[im] = new G4LogicalVolume(nps_solid,
-				      fNistManager->FindOrBuildMaterial("G4_AIR"),
-				      stmp);
-    
-    for( int ix=0 ; ix < fNPSNrow ; ix++ ) {
-      for( int iy=0 ; iy < fNPSNcol ; iy++ ) {
-	
-	sprintf( stmp, "pbwo4%d", SDcount );
-	
-	fDetVol[SDcount] = new G4PVPlacement(0, G4ThreeVector(-fNPSNrow*0.5*pbwo4_X+(ix+0.5)*pbwo4_X, -fNPSNcol*0.5*pbwo4_Y+(iy+0.5)*pbwo4_Y, 0.), 
-					     pbwo4_log, stmp, nps_log[im], false, SDcount); 
-	SDcount++;
-	
-      }
+      NPS_th = fNPSAngle;
+      
+      NPS_ph = 0 + ((360./fNPSNcol) * iy) *deg;
+
+      NPS_yprime = NPS_y * std::cos(NPS_th) + NPS_z * std::sin(NPS_th); 
+      NPS_zprime = -NPS_y * std::sin(NPS_th) + NPS_z * std::cos(NPS_th); 
+      
+      NPS_xprime = NPS_x * std::cos(NPS_ph) + NPS_yprime * std::sin(NPS_ph); 
+      NPS_yprime = NPS_x * std::sin(NPS_ph) + NPS_yprime * std::cos(NPS_ph); 
+      
+      G4Transform3D NPS_t3d = G4Translate3D(G4ThreeVector(NPS_xprime, NPS_yprime, NPS_zprime)) 
+	* G4RotateZ3D(NPS_ph).inverse() * G4RotateX3D(NPS_th).inverse();
+      
+      fDetVol[SDcount] = new G4PVPlacement(NPS_t3d, pbwo4_log, stmp, fexpHall_log, false, SDcount);
+      
+      SDcount++;
     }
   }
-  
-  //--------------------------------------------------------------------------- 
 
-  G4double NPS_th     = fNPSAngle;
-  G4double NPS_d      = fNPSDist  + pbwo4_Z/2; 
-  G4double NPS_yprime = NPS_d * std::sin(NPS_th); 
-  G4double NPS_zprime = NPS_d * std::cos(NPS_th); 
-
-  G4RotationMatrix* NPS_rm1  = new G4RotationMatrix();     
-  NPS_rm1->rotateX(NPS_th); 
-  
-  new G4PVPlacement(NPS_rm1, G4ThreeVector(0., NPS_yprime, NPS_zprime), 
-		    nps_log[0], "NPS1", fexpHall_log, false, 0);
-
-  G4RotationMatrix* NPS_rm2  = new G4RotationMatrix(); 
-  NPS_rm2->rotateX(-NPS_th); 
-  
-  new G4PVPlacement(NPS_rm2, G4ThreeVector(0., -NPS_yprime, NPS_zprime), 
-		    nps_log[1], "NPS2", fexpHall_log, false, 0);
-
-  G4RotationMatrix* NPS_rm3  = new G4RotationMatrix(); 
-  NPS_rm3->rotateZ(60 *deg); 
-  NPS_rm3->rotateX(-NPS_th); 
-
-  G4double NPS_xprime3 = NPS_yprime * std::sin(60*deg); 
-  G4double NPS_yprime3 = NPS_yprime * std::cos(60*deg); 
-
-  new G4PVPlacement(NPS_rm3, G4ThreeVector(-NPS_xprime3, -NPS_yprime3, NPS_zprime), 
-		    nps_log[2], "NPS3", fexpHall_log, false, 0);
-
-  G4RotationMatrix* NPS_rm4  = new G4RotationMatrix(); 
-  NPS_rm4->rotateZ(-60 *deg); 
-  NPS_rm4->rotateX(NPS_th); 
-
-  new G4PVPlacement(NPS_rm4, G4ThreeVector(-NPS_xprime3, NPS_yprime3, NPS_zprime), 
-		    nps_log[3], "NPS4", fexpHall_log, false, 0);
-
-  G4RotationMatrix* NPS_rm5  = new G4RotationMatrix(); 
-  NPS_rm5->rotateZ(-60 *deg); 
-  NPS_rm5->rotateX(-NPS_th); 
-
-  new G4PVPlacement(NPS_rm5, G4ThreeVector(NPS_xprime3, -NPS_yprime3, NPS_zprime), 
-		    nps_log[4], "NPS5", fexpHall_log, false, 0);
-
-  G4RotationMatrix* NPS_rm6  = new G4RotationMatrix(); 
-  NPS_rm6->rotateZ(60 *deg); 
-  NPS_rm6->rotateX(NPS_th); 
-
-  new G4PVPlacement(NPS_rm6, G4ThreeVector(NPS_xprime3, NPS_yprime3, NPS_zprime), 
-		    nps_log[5], "NPS6", fexpHall_log, false, 0);
 
   //--------------------------------------------------------------------------- 
-  // Create six sector "HCAL" proton arm
+  // Create electron arm shield
+  //--------------------------------------------------------------------------- 
+
+  G4double NPSshield_X = pbwo4_X; 
+  G4double NPSshield_Y = (fNPSNrow+1) * pbwo4_Y;  
+  G4double NPSshield_Z = fNPSShieldThick;
+  
+  G4Box* NPSshield_solid = new G4Box("NPSshield_solid", 0.5*NPSshield_X, 0.5*NPSshield_Y, 0.5*NPSshield_Z);
+  
+  G4LogicalVolume* NPSshield_log = new G4LogicalVolume( NPSshield_solid,
+						        fNistManager->FindOrBuildMaterial("G4_AIR"),
+						        "NPSshield_log");
+
+  G4double NPSshield_x, NPSshield_y, NPSshield_z, NPSshield_th, NPSshield_ph;
+  G4double NPSshield_xprime, NPSshield_yprime, NPSshield_zprime;
+  
+  for( int iy=0 ; iy < fNPSNcol ; iy++ ) {
+    
+    sprintf( stmp, "npsshield%d", iy );
+    
+    NPSshield_x  = 0.0;
+    NPSshield_y  = 0.0;
+    NPSshield_z  = fNPSDist - 0.5*pbwo4_Z - NPSshield_Z - 20 *mm;
+    
+    NPSshield_th = fNPSAngle;
+    
+    NPSshield_ph = 0 + ((360./fNPSNcol) * iy) *deg;
+    
+    NPSshield_yprime = NPSshield_z * std::sin(NPSshield_th); 
+    NPSshield_zprime = NPSshield_z * std::cos(NPSshield_th); 
+    
+    NPSshield_xprime = NPSshield_x * std::cos(NPSshield_ph) + NPSshield_yprime * std::sin(NPSshield_ph); 
+    NPSshield_yprime = NPSshield_x * std::sin(NPSshield_ph) + NPSshield_yprime * std::cos(NPSshield_ph); 
+    
+    G4Transform3D NPSshield_t3d = G4Translate3D(G4ThreeVector(NPSshield_xprime, NPSshield_yprime, 0.0)) * G4RotateZ3D(NPSshield_ph).inverse() 
+      * G4Translate3D(G4ThreeVector(0.0, 0.0, NPSshield_zprime)) * G4RotateX3D(NPSshield_th).inverse();
+    
+    new G4PVPlacement(NPSshield_t3d, NPSshield_log, stmp, fexpHall_log, false, 0);
+    
+  }
+
+  //--------------------------------------------------------------------------- 
+  // Create "HCAL" proton arm
   //--------------------------------------------------------------------------- 
 
   // 44 pairs of 10mm scint + 13mm Fe = 1012 mm
   G4int    HCALNpairs = 44;
+  G4double feabs_Z    = 13.0*mm;
   G4double scintabs_X = 150.0*mm; 
   G4double scintabs_Y = 150.0*mm; 
   G4double scintabs_Z = 1012.0*mm;
-  G4double feabs_Z    = 13.0*mm;
-
+  
   G4Box* scintabs_solid = new G4Box("scintabs_solid", 0.5*scintabs_X, 0.5*scintabs_Y, 0.5*scintabs_Z);
-
+  
   G4Box* feabs_solid    = new G4Box("feabs_solid", 0.5*scintabs_X, 0.5*scintabs_Y, 0.5*feabs_Z);
   
   G4LogicalVolume* scintabs_log = new G4LogicalVolume(scintabs_solid,
 						      fNistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE"),
 						      "scintabs_log");
-
+  
   G4LogicalVolume* feabs_log = new G4LogicalVolume(feabs_solid,
 						   fNistManager->FindOrBuildMaterial("G4_Fe"),
 						   "feabs_log");
-
+  
   for( int iz=0 ; iz < HCALNpairs ; iz++ ) {
     
     sprintf( stmp, "feabs%d", iz );
     new G4PVPlacement(0, G4ThreeVector( 0., 0., -scintabs_Z/2 + (iz+0.5)*(10*mm + feabs_Z)  ), 
-					feabs_log, stmp, scintabs_log, false, 9999 );   
-
+		      feabs_log, stmp, scintabs_log, false, 9999 );   
+  }
+  
+  G4double HCAL_x, HCAL_y, HCAL_z, HCAL_th, HCAL_ph;
+  G4double HCAL_xprime, HCAL_yprime, HCAL_zprime;
+  
+  for( int ix=0 ; ix < fHCALNrow ; ix++ ) {
+    for( int iy=0 ; iy < fHCALNcol ; iy++ ) {
+      
+      sprintf( stmp, "hcal%d", SDcount );
+      
+      HCAL_x  = 0.0;
+      HCAL_y  = -scintabs_Y + (ix*scintabs_Y);
+      HCAL_z  = fHCALDist;
+      
+      HCAL_th = fHCALAngle;
+      
+      HCAL_ph = 0 + ((360./fHCALNcol) * iy) *deg;
+      
+      HCAL_yprime = HCAL_y * std::cos(HCAL_th) + HCAL_z * std::sin(HCAL_th); 
+      HCAL_zprime = -HCAL_y * std::sin(HCAL_th) + HCAL_z * std::cos(HCAL_th); 
+      
+      HCAL_xprime = HCAL_x * std::cos(HCAL_ph) + HCAL_yprime * std::sin(HCAL_ph); 
+      HCAL_yprime = HCAL_x * std::sin(HCAL_ph) + HCAL_yprime * std::cos(HCAL_ph); 
+      
+      G4Transform3D HCAL_t3d = G4Translate3D(G4ThreeVector(HCAL_xprime, HCAL_yprime, HCAL_zprime)) 
+	* G4RotateZ3D(HCAL_ph).inverse() * G4RotateX3D(HCAL_th).inverse();
+      
+      fDetVol[SDcount] = new G4PVPlacement(HCAL_t3d, scintabs_log, stmp, fexpHall_log, false, SDcount);
+      
+      SDcount++;
+    }
   }
 
+
   //--------------------------------------------------------------------------- 
-
-  G4double pbshield_X = fHCALNrow*0.5*scintabs_X; 
-  G4double pbshield_Y = fHCALNcol*0.5*scintabs_Y; 
-  G4double pbshield_Z = fShieldThick;
-  
-  G4Box* pbshield_solid = new G4Box("pbshield_solid", pbshield_X, pbshield_Y, 0.5*pbshield_Z);
-  
-  G4LogicalVolume* pbshield_log = new G4LogicalVolume(pbshield_solid,
-						      fNistManager->FindOrBuildMaterial("G4_Pb"),
-						      "pbshield_log");
-
+  // Create hadron arm hodoscope layer
   //--------------------------------------------------------------------------- 
 
   G4double hodoscint_X = 30.0 *mm;
@@ -237,107 +255,80 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4LogicalVolume* hodoscint_log = new G4LogicalVolume(hodoscint_solid,
 						       fNistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE"),
 						       "hodoscint_log");
-
-  //--------------------------------------------------------------------------- 
-
-  G4Box* hcal_solid = new G4Box("hcal_solid", fHCALNrow*0.5*scintabs_X, fHCALNcol*0.5*scintabs_Y, 
-				(0.5*pbshield_Z + 0.5*hodoscint_Z + 0.5*scintabs_Z ) );
   
-  G4LogicalVolume* hcal_log[fHCALNmod];
-  
-  for( int im=0 ; im < fHCALNmod ; im++ ) {
+  G4double HODO_x, HODO_y, HODO_z, HODO_th, HODO_ph;
+  G4double HODO_xprime, HODO_yprime, HODO_zprime;
 
-  //--------------------------------------------------------------------------- 
-    
-    sprintf( stmp, "hcal_log%d", im );
-    hcal_log[im] = new G4LogicalVolume(hcal_solid,
-				       fNistManager->FindOrBuildMaterial("G4_Pb"),
-				       stmp);
-    
-    new G4PVPlacement(0, G4ThreeVector(0., 0., -0.5*(scintabs_Z + hodoscint_Z ) ), 
-		      pbshield_log, "pbshield", hcal_log[im], false, 0 ); 
-
-    //--------------------------------------------------------------------------- 
-    
-    for( int ix=0 ; ix < fHodoNrow ; ix++ ) {
-      for( int iy=0 ; iy < fHodoNcol ; iy++ ) {
-	
- 	sprintf( stmp, "hodoscint%d", SDcount );
-	fDetVol[SDcount] = new G4PVPlacement(0, G4ThreeVector( -fHodoNrow*0.5*hodoscint_X + (ix+0.5)*hodoscint_X, 
-							       -fHodoNcol*0.5*hodoscint_Y + (iy+0.5)*hodoscint_Y, 
-							       0.5*(pbshield_Z -  scintabs_Z)  ), 
-					     hodoscint_log, stmp, hcal_log[im], false, SDcount ); 
- 	SDcount++;
-
-      }
-    }
-  }
-    
-  //--------------------------------------------------------------------------- 
-  
-  for( int im=0 ; im < fHCALNmod ; im++ ) {
-    for( int ix=0 ; ix < fHCALNrow ; ix++ ) {
-      for( int iy=0 ; iy < fHCALNcol ; iy++ ) {
-	
- 	sprintf( stmp, "scintabs%d", SDcount );
- 	fDetVol[SDcount] = new G4PVPlacement(0, G4ThreeVector( -fHCALNrow*0.5*scintabs_X + (ix+0.5)*scintabs_X, 
-							       -fHCALNcol*0.5*scintabs_Y + (iy+0.5)*scintabs_Y, 
-							       0.5*(pbshield_Z + hodoscint_Z) ), 
-					     scintabs_log, stmp, hcal_log[im], false, SDcount); 
- 	SDcount++;
-      }
+  for( int ix=0 ; ix < fHodoNrow ; ix++ ) {
+    for( int iy=0 ; iy < fHodoNcol ; iy++ ) {
+      
+      sprintf( stmp, "hodo%d", SDcount );
+      
+      HODO_x  = 0.0;
+      HODO_y  = -hodoscint_Y + (ix*hodoscint_Y);
+      HODO_z  = fHCALDist - 0.5*scintabs_Z - 0.5*hodoscint_Z - 20 *mm;
+      
+      HODO_th = fHCALAngle;
+      
+      HODO_ph = 0 + ((360./fHodoNcol) * iy) *deg;
+      
+      HODO_yprime = HODO_y * std::cos(HODO_th) + HODO_z * std::sin(HODO_th); 
+      HODO_zprime = -HODO_y * std::sin(HODO_th) + HODO_z * std::cos(HODO_th); 
+      
+      HODO_xprime = HODO_x * std::cos(HODO_ph) + HODO_yprime * std::sin(HODO_ph); 
+      HODO_yprime = HODO_x * std::sin(HODO_ph) + HODO_yprime * std::cos(HODO_ph); 
+      
+      G4Transform3D HODO_t3d = G4Translate3D(G4ThreeVector(HODO_xprime, HODO_yprime, HODO_zprime))
+	* G4RotateZ3D(HODO_ph).inverse() * G4RotateX3D(HODO_th).inverse();
+      
+      fDetVol[SDcount] = new G4PVPlacement(HODO_t3d, hodoscint_log, stmp, fexpHall_log, false, SDcount);
+      
+      SDcount++;
     }
   }
 
   //--------------------------------------------------------------------------- 
+  // Create hadron arm shield
+  //--------------------------------------------------------------------------- 
+
+  G4double HCALshield_X = scintabs_X; 
+  G4double HCALshield_Y = (fHCALNrow+1) * scintabs_Y; 
+  G4double HCALshield_Z = fNPSShieldThick;
   
-  G4double HCAL_th           = fHCALAngle; 
-  G4double HCAL_d            = fHCALDist + scintabs_Z/2 + pbshield_Z/2 + hodoscint_Z/2; 
-  G4double HCAL_yprime       = HCAL_d * std::sin(HCAL_th); 
-  G4double HCAL_zprime       = HCAL_d * std::cos(HCAL_th); 
+  G4Box* HCALshield_solid = new G4Box("HCALshield_solid", HCALshield_X, HCALshield_Y, 0.5*HCALshield_Z);
   
-  G4RotationMatrix* HCAL_rm1  = new G4RotationMatrix(); 
-  HCAL_rm1->rotateX(HCAL_th); 
+  G4LogicalVolume* HCALshield_log = new G4LogicalVolume(HCALshield_solid,
+							fNistManager->FindOrBuildMaterial("G4_AIR"),
+							"HCALshield_log");
   
-  new G4PVPlacement(HCAL_rm1, G4ThreeVector(0., HCAL_yprime, HCAL_zprime), 
-		    hcal_log[0], "HCAL1", fexpHall_log, false, 0);
-
-  G4RotationMatrix* HCAL_rm2  = new G4RotationMatrix(); 
-  HCAL_rm2->rotateX(-HCAL_th); 
+  G4double HCALshield_x, HCALshield_y, HCALshield_z, HCALshield_th, HCALshield_ph;
+  G4double HCALshield_xprime, HCALshield_yprime, HCALshield_zprime;
   
-  new G4PVPlacement(HCAL_rm2, G4ThreeVector(0., -HCAL_yprime, HCAL_zprime), 
-		    hcal_log[1], "HCAL2", fexpHall_log, false, 0);
-
-  G4RotationMatrix* HCAL_rm3  = new G4RotationMatrix(); 
-  HCAL_rm3->rotateZ(60 *deg); 
-  HCAL_rm3->rotateX(-HCAL_th); 
-
-  G4double HCAL_xprime3 = HCAL_yprime * std::sin(60*deg); 
-  G4double HCAL_yprime3 = HCAL_yprime * std::cos(60*deg); 
-
-  new G4PVPlacement(HCAL_rm3, G4ThreeVector(-HCAL_xprime3, -HCAL_yprime3, HCAL_zprime), 
-		    hcal_log[2], "HCAL3", fexpHall_log, false, 0);
-
-  G4RotationMatrix* HCAL_rm4  = new G4RotationMatrix(); 
-  HCAL_rm4->rotateZ(-60 *deg); 
-  HCAL_rm4->rotateX(HCAL_th); 
-
-  new G4PVPlacement(HCAL_rm4, G4ThreeVector(-HCAL_xprime3, HCAL_yprime3, HCAL_zprime), 
-		    hcal_log[3], "HCAL4", fexpHall_log, false, 0);
-
-  G4RotationMatrix* HCAL_rm5  = new G4RotationMatrix(); 
-  HCAL_rm5->rotateZ(-60 *deg); 
-  HCAL_rm5->rotateX(-HCAL_th); 
-
-  new G4PVPlacement(HCAL_rm5, G4ThreeVector(HCAL_xprime3, -HCAL_yprime3, HCAL_zprime), 
-		    hcal_log[4], "HCAL5", fexpHall_log, false, 0);
-
-  G4RotationMatrix* HCAL_rm6  = new G4RotationMatrix(); 
-  HCAL_rm6->rotateZ(60 *deg); 
-  HCAL_rm6->rotateX(HCAL_th); 
-
-  new G4PVPlacement(HCAL_rm6, G4ThreeVector(HCAL_xprime3, HCAL_yprime3, HCAL_zprime), 
-		    hcal_log[5], "HCAL6", fexpHall_log, false, 0);
+  for( int iy=0 ; iy < fHCALNcol ; iy++ ) {
+    
+    sprintf( stmp, "hcalshield%d", iy );
+    
+    HCALshield_x  = 0.0;
+    HCALshield_y  = 0.0;
+    HCALshield_z  = fHCALDist - 0.5*scintabs_Z - hodoscint_Z - HCALshield_Z - 20 *mm;
+    
+    HCALshield_th = fHCALAngle;
+    
+    HCALshield_ph = 0 + ((360./fHCALNcol) * iy) *deg;
+    
+    HCALshield_yprime = HCALshield_z * std::sin(HCALshield_th); 
+    HCALshield_zprime = HCALshield_z * std::cos(HCALshield_th); 
+    
+    HCALshield_xprime = HCALshield_x * std::cos(HCALshield_ph) + HCALshield_yprime * std::sin(HCALshield_ph); 
+    HCALshield_yprime = HCALshield_x * std::sin(HCALshield_ph) + HCALshield_yprime * std::cos(HCALshield_ph); 
+    
+    G4Transform3D HCALshield_t3d = G4Translate3D(G4ThreeVector(HCALshield_xprime, HCALshield_yprime, HCALshield_zprime)) 
+      * G4RotateZ3D(HCALshield_ph).inverse() * G4RotateX3D(HCALshield_th).inverse();
+    
+    new G4PVPlacement(HCALshield_t3d, HCALshield_log, stmp, fexpHall_log, false, 0);
+    
+  }
+    
   
   //---------------------------------------------------------------------------
   // Set Logical Attributes
@@ -359,23 +350,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   hodoscint_log->SetSensitiveDetector( fVirtualDetectorSD );
 
   // Visualisation
-  G4VisAttributes* blue    = new G4VisAttributes( G4Colour(0.0,0.0,1.0) );
-  G4VisAttributes* green   = new G4VisAttributes( G4Colour(0.0,1.0,0.0) );
-  G4VisAttributes* magenta = new G4VisAttributes( G4Colour(1.0,0.0,1.0) );
-  G4VisAttributes* yellow  = new G4VisAttributes( G4Colour(1.0,1.0,0.0) );
-
-  fLogicTarget->SetVisAttributes(blue);
-  pbwo4_log->SetVisAttributes(green);
-  scintabs_log->SetVisAttributes(magenta);
-  hodoscint_log->SetVisAttributes(yellow);
+  fLogicTarget->SetVisAttributes(G4Colour::Blue());
+  pbwo4_log->SetVisAttributes(G4Colour::Red());
+  NPSshield_log->SetVisAttributes(G4Colour::Cyan());
+  scintabs_log->SetVisAttributes(G4Colour::Yellow());
+  hodoscint_log->SetVisAttributes(G4Colour::Green());
+  HCALshield_log->SetVisAttributes(G4Colour::Cyan());
 
   feabs_log->SetVisAttributes(G4VisAttributes::Invisible);
   fexpHall_log->SetVisAttributes(G4VisAttributes::Invisible);
-
-  for( int im=0 ; im < fNPSNmod ; im++ ) {
-    nps_log[im]->SetVisAttributes(G4VisAttributes::Invisible);
-    hcal_log[im]->SetVisAttributes(G4VisAttributes::Invisible);
-  }
 
   //---------------------------------------------------------------------------
 
@@ -407,15 +390,15 @@ void DetectorConstruction::BuildBeamline()
   G4double ChamberOuterRadius   = 22.5*inch;
   G4double ChamberInnerRadius   = 20.5*inch;
 
-  G4double ChamberHight         = 3*24.25*2*inch;//20180313 to be modified
-  G4double WindowHight          = 6*19*inch;
-  G4double WindowSubHight       = 6*15*inch;
-  G4double WindowFrameHight     = 6*20*inch;//20130313 guessed
-  G4double WindowClampHight     = 6*20*inch;
+  G4double ChamberHight         = 24.25*2*inch;//20180313 to be modified
+  G4double WindowHight          = 19*inch;
+  G4double WindowSubHight       = 15*inch;
+  G4double WindowFrameHight     = 20*inch;//20130313 guessed
+  G4double WindowClampHight     = 20*inch;
 
   G4double WindowFrameThickness = 1.25*inch;//20130313 guessed
   G4double WindowClampThickness = 0.750*inch;
-  G4double WindowThickness      = fShieldThick; //0.020*inch;
+  G4double WindowThickness      = fSCWinThick; //0.020*inch;
 
 //   G4double ChamberHight         = 24.25*2*inch;//20180313 to be modified
 //   G4double WindowHight          = 19*inch;
@@ -589,15 +572,20 @@ void DetectorConstruction::BuildBeamline()
   // Target Cell & Target
   //---------------------------------------------------------------------------
 
-  G4Tubs* sTargetCell = new G4Tubs("TargetCell_sol",           
-				   0., TargetCellRadius, 0.5*TargetCellLength, 0.,twopi); 
-
-  G4LogicalVolume*   LogicTargetCell = new G4LogicalVolume(sTargetCell, TargetCellMaterial, "TargetCell_log");   
+  //---------------------------------------------------------------------------
+  // Target Cell & Target
+  //---------------------------------------------------------------------------
 
   G4RotationMatrix *xTargetRot = new G4RotationMatrix;  
   xTargetRot->rotateX(-90*degree);                     
 
-  new G4PVPlacement(xTargetRot, G4ThreeVector(), LogicTargetCell, "TargetCell_pos",  LogicInnerChamber, false, 0 );  
+  G4Tubs* sTargetCell = new G4Tubs("TargetCell_sol",           
+				   0., TargetCellRadius, (0.5*TargetLength)+TargetWindowThickness, 0.,twopi); 
+
+  G4LogicalVolume*   LogicTargetCell = new G4LogicalVolume(sTargetCell, TargetCellMaterial, "TargetCell_log");   
+
+  new G4PVPlacement(xTargetRot, G4ThreeVector(0., -43.9*cm, 0.), 
+		    LogicTargetCell, "TargetCell_pos",  LogicInnerChamber, false, 0 );  
 
   //---------------------------------------------------------------------------
 
@@ -1103,7 +1091,7 @@ void DetectorConstruction::BuildTarget()
   
   G4Material* VacuumMaterial                = fNistManager->FindOrBuildMaterial("G4_Galactic");
   G4Material* TargetMaterial                = fNistManager->FindOrBuildMaterial("G4_lH2");
-  G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Galactic");
+  G4Material* TargetCellMaterial            = fNistManager->FindOrBuildMaterial("G4_Al");
   
   const G4double     inch = 2.54*cm;
 
@@ -1167,7 +1155,7 @@ void DetectorConstruction::BuildTarget()
   xTargetRot->rotateX(-90*degree);                     
 
   G4Tubs* sTargetCell = new G4Tubs("TargetCell_sol",           
-				   0., TargetCellRadius, 0.5*TargetCellLength, 0.,twopi); 
+				   0., TargetCellRadius, (0.5*TargetLength)+TargetWindowThickness, 0.,twopi); 
 
   G4LogicalVolume*   LogicTargetCell = new G4LogicalVolume(sTargetCell, TargetCellMaterial, "TargetCell_log");   
 
