@@ -153,18 +153,18 @@ void OutputManager::ZeroArray()
     fVirtual_vx[i]      = -INT_MAX;
     fVirtual_vy[i]      = -INT_MAX;
     fVirtual_vz[i]      = -INT_MAX;
-    fVirtual_det[i]     = -INT_MAX;
-    fVirtual_row[i]     = -INT_MAX;
-    fVirtual_col[i]     = -INT_MAX;
+    fVirtual_det[i]     = -9;
+    fVirtual_row[i]     = -9;
+    fVirtual_col[i]     = -9;
 
     fReal_Edep[i]       = -INT_MAX;
     fReal_t[i]          = -INT_MAX;
     fReal_xpos[i]       = -INT_MAX;
     fReal_ypos[i]       = -INT_MAX;
     fReal_zpos[i]       = -INT_MAX;
-    fReal_det[i]        = -INT_MAX;
-    fReal_row[i]        = -INT_MAX;
-    fReal_col[i]        = -INT_MAX;
+    fReal_det[i]        = -9;
+    fReal_row[i]        = -9;
+    fReal_col[i]        = -9;
   }
 
 }
@@ -221,21 +221,23 @@ void OutputManager::FillVirtualArray( Int_t hitn )
 void OutputManager::FillRealArray( G4int hitn ) 
 {
 
-  if( hitn < fMaxhits && fReal_detid != 0 && fReal_detid != 9999 ) {
+  if( hitn < fMaxhits ) {
     
     fReal_Edep[hitn]   = (Double_t)fReal_edep *MeV;                                   
     fReal_t[hitn]      = (Double_t)fReal_time *ns;                                   
-
+    
     Double_t xpre  = (Double_t)fReal_pospre.getX() /cm;                             
     Double_t ypre  = (Double_t)fReal_pospre.getY() /cm;                                                          
     Double_t zpre  = (Double_t)fReal_pospre.getZ() /cm;                                                          
     Double_t xpost = (Double_t)fReal_pospost.getX() /cm;                                                          
     Double_t ypost = (Double_t)fReal_pospost.getY() /cm;                                                          
     Double_t zpost = (Double_t)fReal_pospost.getZ() /cm;                                                          
-
+    
     fReal_xpos[hitn]   = (xpre + xpost)/2.;
     fReal_ypos[hitn]   = (ypre + ypost)/2.;
     fReal_zpos[hitn]   = (zpre + zpost)/2.;
+    
+ 
 
     if( fReal_detid >= 1 && fReal_detid <= fNearm ) { 
       fReal_det[hitn] = 0;                               // NPS
@@ -255,7 +257,6 @@ void OutputManager::FillRealArray( G4int hitn )
     
     fReal_Nhits++;
   }
-
 }
 
 //---------------------------------------------------------------------------
