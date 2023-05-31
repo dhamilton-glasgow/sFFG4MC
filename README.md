@@ -15,11 +15,11 @@
 	No scattering chamber or exit beamline
 	(when included. scattering chamber window thickness is 0.05 cm)
 	Earm is an array of 2 x 2 x 20 cm3 PbW04 blocks in a ring (1200 total)
-	Earm is at 15.5 degrees and a distance of 291 cm
+	Earm is at 15.5 degrees and a distance of 291 cm (to front face)
 	Harm has a 1 cm thick lead shield
 	Harm is an array of 15 x 15 x 101.2 cm3 scint-Fe blocks (288 total)
 	Harm blocks are 44 pairs of plastic scintillator (10mm) and iron (13mm)
-	Harm is at 42.5 degrees and a distance of 376 cm
+	Harm is at 42.5 degrees and a distance of 376 cm (to front face)
 	Hodoscope is an plastic scintillator array of 3 x 3 x 10 cm3 detectors (7200 total)
 	Harm has a 5 cm thick lead shield
 
