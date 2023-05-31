@@ -49,16 +49,14 @@ Double_t      fPz[fMaxparticles];
 Double_t      fE[fMaxparticles];
 Int_t         fPDG[fMaxparticles];
 
-enum { kElastic, kDIS, kQE, kInelastic, kPiPhoto, kNReact }; 
+enum { kElastic, kQE, kInelastic, kPiPhoto, kDIS, kNReact }; 
 
 Double_t fRasterSize  = 0.2;   // cm
 Double_t fTarLength   = 10.;   // cm
 Double_t fWindowThick = 0.125; // cm
 Double_t fBeamE       = 6.6;   // GeV
 Double_t fThetaMin    = 10.5 * TMath::DegToRad(); 
-Double_t fThetaMax    = 50.5 * TMath::DegToRad(); 
-// Double_t fThetaMin    = 14.5 * TMath::DegToRad(); 
-// Double_t fThetaMax    = 16.5 * TMath::DegToRad(); 
+Double_t fThetaMax    = 20.5 * TMath::DegToRad(); 
 
 // ----------------------------------------------------------------------------
 
@@ -93,8 +91,7 @@ void Evgen( Int_t run_no = 9999, Int_t ngen = 1000 )
      fflush(stdout);
     }
 
-    fReactFlag = fRand->Integer( 3 );
-    //    fReactFlag = fRand->Integer( kNReact );
+    fReactFlag = fRand->Integer( kNReact );
     GenerateReaction();
     
     if( fNparticles < 1 ) continue; 
@@ -153,7 +150,7 @@ void GenerateReaction()
   Double_t yv = fRand->Uniform( -fRasterSize/2, fRasterSize/2 );
   Double_t zv = fRand->Uniform( -fTarLength/2, fTarLength/2 );
 
-  Double_t L      = (0.0708*6.022e23)*fTarLength*(60.e-6/1.602e-19); // 60uA on LH2
+  Double_t L      = (0.0708*6.022e23)*fTarLength*(65.e-6/1.602e-19); // 65uA on LH2
   Double_t dOmega = TMath::TwoPi()*(TMath::Cos(fThetaMin)-TMath::Cos(fThetaMax));
 
   TLorentzVector beamP4( 0., 0., fBeamE, fBeamE );
@@ -218,7 +215,7 @@ void GenerateReaction()
   // ep -> e(X) DIS with F2 from CTEQ6
   // ----------------------------------------------------------------------------
 
-  else if ( fReactFlag == kDIS ) { 
+  if ( fReactFlag == kDIS ) { 
 
       fNparticles = 1;
       fVertex[0]->SetXYZ( xv, yv, zv );
@@ -321,7 +318,7 @@ void GenerateReaction()
   // ep -> eppi0 and ep -> enpi+ (Bosted and Christy, arxiv 0712.3731v4 )
   // ----------------------------------------------------------------------------
 
-  else if ( fReactFlag == kInelastic ) { 
+  if ( fReactFlag == kInelastic ) { 
 
     fNparticles = 3;
     fVertex[0]->SetXYZ( xv, yv, zv );
@@ -392,7 +389,7 @@ void GenerateReaction()
   // gammap -> ppi0 (fit to E99114 data)
   // ----------------------------------------------------------------------------
 
-  else if ( fReactFlag == kPiPhoto ) { 
+  if ( fReactFlag == kPiPhoto ) { 
 
     fNparticles = 2;
     fVertex[0]->SetXYZ( xv, yv, zv );
@@ -417,8 +414,8 @@ void GenerateReaction()
     Double_t M_ni = fDBpdg->GetParticle(2212)->Mass(); 
     Double_t M_nf = fDBpdg->GetParticle(fPDG[0])->Mass(); 
     Double_t Mpi  = fDBpdg->GetParticle(fPDG[1])->Mass(); 
-
-    Double_t thp  = TMath::ACos( fRand->Uniform(-1,1) );
+    
+    Double_t thp  = TMath::ACos( fRand->Uniform(0.47,0.67) );
     Double_t php  = fRand->Uniform(0, TMath::TwoPi());
     Float_t Epcm  = (W2 + M_nf*M_nf - Mpi*Mpi)/(2.0*W);   
     Float_t ppcm  = TMath::Sqrt( (Epcm*Epcm - M_nf*M_nf) );
